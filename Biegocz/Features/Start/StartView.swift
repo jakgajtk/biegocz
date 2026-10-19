@@ -2,8 +2,11 @@ import SwiftData
 import SwiftUI
 
 struct StartView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(SessionCoordinator.self) private var coordinator
     @Query(filter: #Predicate<Activity> { $0.isFinished }, sort: \Activity.startDate, order: .reverse)
     private var activities: [Activity]
+    @State private var isPickingWorkoutToRepeat = false
 
     var body: some View {
         NavigationStack {
@@ -11,12 +14,16 @@ struct StartView: View {
                 VStack(spacing: 16) {
                     WeekSummaryCard(activities: activities)
 
-                    ForEach(ActivityType.allCases) { type in
-                        StartButton(title: type.title, systemImage: type.systemImage) {}
-                            .disabled(true)
+                    StartButton(title: ActivityType.gym.title, systemImage: ActivityType.gym.systemImage) {
+                        coordinator.startGym(in: modelContext)
                     }
-                    StartButton(title: "Repeat a previous workout", systemImage: "arrow.counterclockwise") {}
+                    StartButton(title: ActivityType.run.title, systemImage: ActivityType.run.systemImage) {}
                         .disabled(true)
+                    StartButton(title: ActivityType.ride.title, systemImage: ActivityType.ride.systemImage) {}
+                        .disabled(true)
+                    StartButton(title: "Repeat a previous workout", systemImage: "arrow.counterclockwise") {
+                        isPickingWorkoutToRepeat = true
+                    }
                 }
                 .padding()
             }
@@ -28,6 +35,11 @@ struct StartView: View {
                     } label: {
                         Label("Settings", systemImage: "gearshape")
                     }
+                }
+            }
+            .sheet(isPresented: $isPickingWorkoutToRepeat) {
+                RepeatWorkoutPickerView { workout in
+                    coordinator.repeatGym(workout, in: modelContext)
                 }
             }
         }
@@ -91,4 +103,5 @@ private struct WeekSummaryCard: View {
 #Preview {
     StartView()
         .modelContainer(try! PersistenceController.makeContainer(inMemory: true))
+        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier()))
 }

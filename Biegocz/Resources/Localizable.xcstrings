@@ -177,6 +177,16 @@
         }
       }
     },
+    "+30 s" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+30 s"
+          }
+        }
+      }
+    },
     "Actions" : {
       "localizations" : {
         "pl" : {
@@ -193,6 +203,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rodzaj aktywności"
+          }
+        }
+      }
+    },
+    "Add a note" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj notatkę"
+          }
+        }
+      }
+    },
+    "Add exercise" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj ćwiczenie"
+          }
+        }
+      }
+    },
+    "Add set" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj serię"
+          }
+        }
+      }
+    },
+    "Added weight" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obciążenie dodatkowe"
           }
         }
       }
@@ -247,6 +297,16 @@
         }
       }
     },
+    "Best set" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najlepsza seria"
+          }
+        }
+      }
+    },
     "Bodyweight reps" : {
       "localizations" : {
         "pl" : {
@@ -277,12 +337,32 @@
         }
       }
     },
+    "Close" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamknij"
+          }
+        }
+      }
+    },
     "Core" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Brzuch"
+          }
+        }
+      }
+    },
+    "Create new exercise" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utwórz nowe ćwiczenie"
           }
         }
       }
@@ -303,6 +383,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Data"
+          }
+        }
+      }
+    },
+    "Decrease" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmniejsz"
           }
         }
       }
@@ -337,6 +427,36 @@
         }
       }
     },
+    "Discard" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odrzuć"
+          }
+        }
+      }
+    },
+    "Discard this workout?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odrzucić ten trening?"
+          }
+        }
+      }
+    },
+    "Discard workout" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odrzuć trening"
+          }
+        }
+      }
+    },
     "Distance" : {
       "localizations" : {
         "pl" : {
@@ -347,12 +467,82 @@
         }
       }
     },
+    "Done" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gotowe"
+          }
+        }
+      }
+    },
     "Duration" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Czas trwania"
+          }
+        }
+      }
+    },
+    "Elapsed time" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czas od startu"
+          }
+        }
+      }
+    },
+    "Estimated 1RM" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany 1RM"
+          }
+        }
+      }
+    },
+    "Estimated 1RM over time" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany 1RM w czasie"
+          }
+        }
+      }
+    },
+    "Estimated with the Epley formula from sets of 1 to 12 reps." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szacowany wzorem Epleya na podstawie serii od 1 do 12 powtórzeń."
+          }
+        }
+      }
+    },
+    "Everything logged in this workout will be deleted." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystko, co zapisano w tym treningu, zostanie usunięte."
+          }
+        }
+      }
+    },
+    "Exercise options" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcje ćwiczenia"
           }
         }
       }
@@ -397,6 +587,46 @@
         }
       }
     },
+    "Finish" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zakończ"
+          }
+        }
+      }
+    },
+    "Finish workout" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zakończ trening"
+          }
+        }
+      }
+    },
+    "Finish workout?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zakończyć trening?"
+          }
+        }
+      }
+    },
+    "Finished gym workouts can be repeated from here." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutaj możesz powtórzyć ukończone treningi na siłowni."
+          }
+        }
+      }
+    },
     "Finished workouts, runs and rides show up here." : {
       "localizations" : {
         "pl" : {
@@ -427,6 +657,66 @@
         }
       }
     },
+    "Increase" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zwiększ"
+          }
+        }
+      }
+    },
+    "Last time: %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio: %@"
+          }
+        }
+      }
+    },
+    "Last time: %lld × %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio: %lld × %@"
+          }
+        }
+      }
+    },
+    "Last time: %lld × %lld" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio: %lld × %lld"
+          }
+        }
+      }
+    },
+    "Last time: %lld × %lld @ %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio: %lld × %lld, %@"
+          }
+        }
+      }
+    },
+    "Last time: %lld × %lld @ +%@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio: %lld × %lld, +%@"
+          }
+        }
+      }
+    },
     "Legs" : {
       "localizations" : {
         "pl" : {
@@ -443,6 +733,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sposób zapisu"
+          }
+        }
+      }
+    },
+    "Mark at least one set as done to finish." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aby zakończyć, oznacz co najmniej jedną serię jako wykonaną."
+          }
+        }
+      }
+    },
+    "Mark set as done" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oznacz serię jako wykonaną"
+          }
+        }
+      }
+    },
+    "Mark set as not done" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oznacz serię jako niewykonaną"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Więcej"
           }
         }
       }
@@ -497,6 +827,16 @@
         }
       }
     },
+    "No gym workouts yet" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brak treningów na siłowni"
+          }
+        }
+      }
+    },
     "No sessions yet" : {
       "localizations" : {
         "pl" : {
@@ -537,6 +877,36 @@
         }
       }
     },
+    "Recently used" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio używane"
+          }
+        }
+      }
+    },
+    "Remove exercise" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń ćwiczenie"
+          }
+        }
+      }
+    },
+    "Remove this exercise and its sets?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usunąć to ćwiczenie razem z seriami?"
+          }
+        }
+      }
+    },
     "Rename" : {
       "localizations" : {
         "pl" : {
@@ -557,12 +927,72 @@
         }
       }
     },
+    "Reorder exercises" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień kolejność ćwiczeń"
+          }
+        }
+      }
+    },
     "Repeat a previous workout" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Powtórz poprzedni trening"
+          }
+        }
+      }
+    },
+    "Repeat a workout" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powtórz trening"
+          }
+        }
+      }
+    },
+    "Reps" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Powtórzenia"
+          }
+        }
+      }
+    },
+    "Rest" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przerwa"
+          }
+        }
+      }
+    },
+    "Rest is over" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koniec przerwy"
+          }
+        }
+      }
+    },
+    "Resume" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wznów"
           }
         }
       }
@@ -607,6 +1037,16 @@
         }
       }
     },
+    "Seconds" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sekundy"
+          }
+        }
+      }
+    },
     "Set %lld" : {
       "localizations" : {
         "pl" : {
@@ -623,6 +1063,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Serie"
+          }
+        }
+      }
+    },
+    "Sets not marked as done will be removed." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Serie nieoznaczone jako wykonane zostaną usunięte."
           }
         }
       }
@@ -657,12 +1107,32 @@
         }
       }
     },
+    "Skip" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pomiń"
+          }
+        }
+      }
+    },
     "Start" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start"
+          }
+        }
+      }
+    },
+    "Started %@." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozpoczęto: %@."
           }
         }
       }
@@ -697,12 +1167,52 @@
         }
       }
     },
+    "Time for your next set." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czas na kolejną serię."
+          }
+        }
+      }
+    },
     "Unarchive" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Przywróć"
+          }
+        }
+      }
+    },
+    "Unfinished ride" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieukończona jazda na rowerze"
+          }
+        }
+      }
+    },
+    "Unfinished run" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieukończony bieg"
+          }
+        }
+      }
+    },
+    "Unfinished workout" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nieukończony trening"
           }
         }
       }
@@ -727,6 +1237,16 @@
         }
       }
     },
+    "Weight" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciężar"
+          }
+        }
+      }
+    },
     "Weight and reps" : {
       "localizations" : {
         "pl" : {
@@ -743,6 +1263,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Skok ciężaru"
+          }
+        }
+      }
+    },
+    "Workout saved" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trening zapisany"
           }
         }
       }
@@ -1545,6 +2075,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prostowanie ramion na wyciągu"
+          }
+        }
+      }
+    },
+    "kg" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kg"
+          }
+        }
+      }
+    },
+    "s" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
           }
         }
       }

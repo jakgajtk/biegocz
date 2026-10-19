@@ -60,4 +60,36 @@ extension WorkoutExercise {
     var sortedSets: [ExerciseSet] {
         sets.sorted { $0.order < $1.order }
     }
+
+    var session: ExerciseSession {
+        ExerciseSession(
+            date: activity?.startDate ?? .distantPast,
+            sets: sortedSets.map { LoggedSet(values: $0.values, isDone: $0.isDone) }
+        )
+    }
+}
+
+extension ExerciseSet {
+    var values: SetValues {
+        get { SetValues(weightKg: weightKg, reps: reps, durationSeconds: durationSeconds) }
+        set {
+            weightKg = newValue.weightKg
+            reps = newValue.reps
+            durationSeconds = newValue.durationSeconds
+        }
+    }
+}
+
+extension Exercise {
+    /// Entries of this exercise in finished workouts, newest first.
+    var finishedEntries: [WorkoutExercise] {
+        workoutEntries
+            .filter { $0.activity?.isFinished == true }
+            .sorted { ($0.activity?.startDate ?? .distantPast) > ($1.activity?.startDate ?? .distantPast) }
+    }
+
+    /// The most recent finished session with this exercise, ignoring `activity`.
+    func lastSession(excluding activity: Activity? = nil) -> ExerciseSession? {
+        finishedEntries.first { $0.activity?.id != activity?.id }?.session
+    }
 }

@@ -9,6 +9,7 @@ struct ExerciseEditorView: View {
     }
 
     let mode: Mode
+    var initialName = ""
     var onCreate: ((Exercise) -> Void)?
 
     @Environment(\.modelContext) private var modelContext
@@ -59,6 +60,8 @@ struct ExerciseEditorView: View {
             .onAppear {
                 if case .rename(let exercise) = mode {
                     name = exercise.displayName
+                } else {
+                    name = initialName
                 }
             }
         }
