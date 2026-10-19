@@ -31,11 +31,14 @@ struct ExercisePickerView: View {
             List {
                 Section {
                     Button {
+                        Haptics.tap()
                         isCreating = true
                     } label: {
-                        Label("Create new exercise", systemImage: "plus.circle")
+                        Label("Create new exercise", systemImage: "plus.circle.fill")
+                            .font(.body.weight(.semibold))
                             .frame(minHeight: 44)
                     }
+                    .cardRow()
                 }
 
                 if searchText.isEmpty, !recent.isEmpty {
@@ -56,6 +59,7 @@ struct ExercisePickerView: View {
                     }
                 }
             }
+            .appListStyle()
             .navigationTitle("Add exercise")
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search exercises"))
@@ -81,20 +85,29 @@ struct ExercisePickerView: View {
         Button {
             pick(exercise)
         } label: {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: exercise.displayName)
-                    .foregroundStyle(.primary)
-                Text(exercise.loggingType.title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(verbatim: exercise.displayName)
+                        .font(.body.weight(.medium))
+                        .foregroundStyle(.primary)
+                    Text(exercise.loggingType.title)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "plus.circle")
+                    .font(.title3)
+                    .foregroundStyle(.tint)
             }
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
+        .cardRow()
     }
 
     private func pick(_ exercise: Exercise) {
+        Haptics.success()
         onPick(exercise)
         dismiss()
     }

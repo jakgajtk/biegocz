@@ -23,27 +23,50 @@ struct GymSessionView: View {
 
     private var sessionList: some View {
         List {
+            if model.entries.isEmpty {
+                Section {
+                    VStack(spacing: 12) {
+                        IconBadge(systemImage: "dumbbell.fill", tint: .gymTint, size: 64)
+                            .symbolEffect(.bounce, options: .nonRepeating)
+                        Text("Let's get started")
+                            .font(.title2.weight(.bold))
+                        Text("Add your first exercise. The timer is already running.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+                    .listRowBackground(Color.clear)
+                }
+            }
+
             ForEach(model.entries) { entry in
                 ExerciseSection(model: model, entry: entry, focusedField: $focusedField)
             }
 
             Section {
                 Button {
+                    Haptics.tap()
                     isPickingExercise = true
                 } label: {
-                    Label("Add exercise", systemImage: "plus.circle.fill")
-                        .font(.title3.weight(.semibold))
-                        .frame(maxWidth: .infinity, minHeight: 52)
+                    Label("Add exercise", systemImage: "plus")
                 }
+                .buttonStyle(.prominent(height: 56))
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
             }
 
             Section("Note") {
                 TextField("Add a note", text: Bindable(model.activity).note, axis: .vertical)
                     .lineLimit(1...5)
                     .onSubmit { model.save() }
+                    .cardRow()
             }
         }
         .listStyle(.insetGrouped)
+        .appListStyle()
+        .animation(Design.spring, value: model.entries.map(\.id))
         .scrollDismissesKeyboard(.interactively)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -76,8 +99,10 @@ struct GymSessionView: View {
         .safeAreaInset(edge: .bottom) {
             if model.restTimer != nil {
                 RestTimerBar(model: model)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(Design.bouncy, value: model.restTimer != nil)
         #if DEBUG
         .onAppear {
             if DebugLaunch.screen == .picker { isPickingExercise = true }
@@ -163,11 +188,14 @@ private struct ExerciseSection: View {
             }
 
             Button {
-                model.addSet(to: entry)
+                Haptics.tap()
+                withAnimation(Design.spring) { model.addSet(to: entry) }
             } label: {
                 Label("Add set", systemImage: "plus")
+                    .font(.subheadline.weight(.semibold))
                     .frame(maxWidth: .infinity, minHeight: 44)
             }
+            .cardRow()
         } header: {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -175,6 +203,7 @@ private struct ExerciseSection: View {
                         .font(.title3.weight(.bold))
                         .foregroundStyle(.primary)
                         .textCase(nil)
+                        .lineLimit(2)
                     Spacer()
                     Menu("Exercise options", systemImage: "ellipsis") {
                         Button("Remove exercise", systemImage: "trash", role: .destructive) {
@@ -204,46 +233,96 @@ private struct ExerciseSection: View {
     }
 }
 
+/// Floating rest countdown with a progress ring. Buzzes when rest is over.
 private struct RestTimerBar: View {
     let model: GymSessionModel
 
     var body: some View {
         if let timer = model.restTimer {
-            TimelineView(.periodic(from: .now, by: 0.5)) { context in
-                let remaining = timer.remaining(at: context.date)
-                HStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text("Rest")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        Text(verbatim: Formatters.duration(seconds: remaining.rounded(.up)))
-                            .font(.system(size: 40, weight: .bold, design: .rounded))
-                            .monospacedDigit()
-                            .foregroundStyle(remaining > 0 ? Color.primary : Color.green)
-                    }
-                    .accessibilityElement(children: .combine)
-                    Spacer()
-                    Button {
+            TimelineView(.animation(minimumInterval: 0.1)) { context in
+                RestTimerContent(
+                    timer: timer,
+                    now: context.date,
+                    onExtend: {
+                        Haptics.tap()
                         model.extendRest()
-                    } label: {
-                        Text("+30 s")
-                            .font(.headline)
-                            .frame(minWidth: 64, minHeight: 52)
-                    }
-                    .buttonStyle(.bordered)
-                    Button {
+                    },
+                    onSkip: {
+                        Haptics.tap()
                         model.skipRest()
-                    } label: {
-                        Text(remaining > 0 ? "Skip" : "Close")
-                            .font(.headline)
-                            .frame(minWidth: 64, minHeight: 52)
                     }
-                    .buttonStyle(.borderedProminent)
-                }
-                .padding()
-                .background(.regularMaterial, in: .rect(cornerRadius: 20))
-                .padding(.horizontal)
+                )
             }
+            .padding(.horizontal)
+            .padding(.bottom, 4)
+        }
+    }
+}
+
+private struct RestTimerContent: View {
+    let timer: RestTimer
+    let now: Date
+    let onExtend: () -> Void
+    let onSkip: () -> Void
+
+    private var remaining: TimeInterval { timer.remaining(at: now) }
+    private var isDone: Bool { remaining <= 0 }
+
+    var body: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(.cardFill, lineWidth: 6)
+                Circle()
+                    .trim(from: 0, to: timer.fractionRemaining(at: now))
+                    .stroke(isDone ? Color.success : Color.accentColor, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                Image(systemName: isDone ? "checkmark" : "timer")
+                    .font(.headline.weight(.bold))
+                    .foregroundStyle(isDone ? Color.success : Color.accentColor)
+                    .contentTransition(.symbolEffect(.replace))
+            }
+            .frame(width: 52, height: 52)
+
+            VStack(alignment: .leading, spacing: 0) {
+                Text(isDone ? "Time for your next set" : "Rest")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .textCase(.uppercase)
+                Text(verbatim: Formatters.duration(seconds: remaining.rounded(.up)))
+                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .contentTransition(.numericText(countsDown: true))
+                    .animation(Design.spring, value: Int(remaining.rounded(.up)))
+                    .foregroundStyle(isDone ? Color.success : Color.primary)
+            }
+            .accessibilityElement(children: .combine)
+
+            Spacer(minLength: 0)
+
+            Button(action: onExtend) {
+                Text("+30 s")
+                    .font(.headline)
+                    .frame(minWidth: 60, minHeight: 50)
+                    .background(.cardFill, in: .capsule)
+            }
+            .buttonStyle(.pressable)
+
+            Button(action: onSkip) {
+                Text(isDone ? "Close" : "Skip")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .frame(minWidth: 60, minHeight: 50)
+                    .padding(.horizontal, 4)
+                    .background(isDone ? Color.success : Color.accentColor, in: .capsule)
+            }
+            .buttonStyle(.pressable)
+        }
+        .padding(14)
+        .background(.regularMaterial, in: .rect(cornerRadius: Design.cornerRadius, style: .continuous))
+        .shadow(color: .black.opacity(0.12), radius: 16, y: 6)
+        .onChange(of: isDone) { _, done in
+            if done { Haptics.success() }
         }
     }
 }

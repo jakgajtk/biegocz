@@ -247,6 +247,16 @@
         }
       }
     },
+    "Add your first exercise. The timer is already running." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dodaj pierwsze ćwiczenie. Czas już leci."
+          }
+        }
+      }
+    },
     "Added %lld activities." : {
       "localizations" : {
         "en" : {
@@ -829,6 +839,46 @@
         }
       }
     },
+    "Good afternoon" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień dobry"
+          }
+        }
+      }
+    },
+    "Good evening" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dobry wieczór"
+          }
+        }
+      }
+    },
+    "Good morning" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień dobry"
+          }
+        }
+      }
+    },
+    "Great work. See you next time!" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dobra robota. Do zobaczenia następnym razem!"
+          }
+        }
+      }
+    },
     "Gym" : {
       "localizations" : {
         "pl" : {
@@ -959,12 +1009,32 @@
         }
       }
     },
+    "Last: %@" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ostatnio: %@"
+          }
+        }
+      }
+    },
     "Legs" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nogi"
+          }
+        }
+      }
+    },
+    "Let's get started" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaczynamy"
           }
         }
       }
@@ -1095,6 +1165,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Brak treningów"
+          }
+        }
+      }
+    },
+    "Not yet" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeszcze nie było"
           }
         }
       }
@@ -1369,6 +1449,16 @@
         }
       }
     },
+    "Sessions" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Treningi"
+          }
+        }
+      }
+    },
     "Set %lld" : {
       "localizations" : {
         "pl" : {
@@ -1499,6 +1589,16 @@
         }
       }
     },
+    "Tap to skip" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dotknij, aby pominąć"
+          }
+        }
+      }
+    },
     "The route and all stats will be deleted." : {
       "localizations" : {
         "pl" : {
@@ -1545,6 +1645,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Czas"
+          }
+        }
+      }
+    },
+    "Time for your next set" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czas na kolejną serię"
           }
         }
       }

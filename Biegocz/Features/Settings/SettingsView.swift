@@ -18,44 +18,75 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section("Gym") {
-                Picker("Weight step", selection: $weightStep) {
+                Picker(selection: $weightStep) {
                     ForEach(AppSettings.weightStepOptions, id: \.self) { step in
                         Text(verbatim: Formatters.weight(kg: step)).tag(step)
                     }
+                } label: {
+                    SettingLabel(title: "Weight step", systemImage: "scalemass.fill", tint: .gymTint)
                 }
                 Stepper(
                     value: $restDuration,
                     in: AppSettings.restDurationRange,
                     step: AppSettings.restDurationStep
                 ) {
-                    LabeledContent("Default rest", value: Formatters.duration(seconds: Double(restDuration)))
+                    LabeledContent {
+                        Text(verbatim: Formatters.duration(seconds: Double(restDuration)))
+                            .monospacedDigit()
+                            .contentTransition(.numericText(value: Double(restDuration)))
+                    } label: {
+                        SettingLabel(title: "Default rest", systemImage: "timer", tint: .accentColor)
+                    }
                 }
             }
+            .cardRow()
 
             Section {
-                Toggle("Auto-pause runs", isOn: $autoPauseRun)
-                Toggle("Auto-pause rides", isOn: $autoPauseRide)
+                Toggle(isOn: $autoPauseRun) {
+                    SettingLabel(title: "Auto-pause runs", systemImage: "figure.run", tint: .runTint)
+                }
+                Toggle(isOn: $autoPauseRide) {
+                    SettingLabel(title: "Auto-pause rides", systemImage: "figure.outdoor.cycle", tint: .rideTint)
+                }
             } header: {
                 Text("Run and ride")
             } footer: {
                 Text("Pauses when you stop moving and resumes when you move again.")
             }
+            .cardRow()
 
             Section {
-                Button("Export data", systemImage: "square.and.arrow.up", action: export)
-                Button("Import data", systemImage: "square.and.arrow.down") {
+                Button(action: export) {
+                    SettingLabel(title: "Export data", systemImage: "square.and.arrow.up", tint: .success)
+                }
+                Button {
                     isImporting = true
+                } label: {
+                    SettingLabel(title: "Import data", systemImage: "square.and.arrow.down", tint: .warning)
                 }
             } header: {
                 Text("Data")
             } footer: {
                 Text("Exports everything as JSON, plus a CSV of all gym sets. Importing a JSON export adds what's missing and never changes or deletes existing data.")
             }
+            .cardRow()
 
             Section {
-                LabeledContent("Version", value: Bundle.main.appVersion)
+                LabeledContent {
+                    Text(verbatim: Bundle.main.appVersion)
+                } label: {
+                    SettingLabel(title: "Version", systemImage: "info", tint: .secondary)
+                }
             }
+            .cardRow()
         }
+        .appListStyle()
+        .tint(.accentColor)
+        .sensoryFeedback(.selection, trigger: weightStep)
+        .sensoryFeedback(.selection, trigger: restDuration)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: autoPauseRun)
+        .sensoryFeedback(.impact(flexibility: .soft), trigger: autoPauseRide)
+        .animation(Design.spring, value: restDuration)
         .navigationTitle("Settings")
         .sheet(item: $exportedFiles) { files in
             ShareSheet(items: files.urls)
@@ -107,6 +138,26 @@ struct SettingsView: View {
             importResult = try DataImporter.importData(data, into: modelContext)
         } catch {
             importFailed = true
+        }
+    }
+}
+
+/// Settings-style row label: a small tinted icon tile and a title.
+private struct SettingLabel: View {
+    let title: LocalizedStringKey
+    let systemImage: String
+    let tint: Color
+
+    var body: some View {
+        Label {
+            Text(title)
+                .foregroundStyle(.primary)
+        } icon: {
+            Image(systemName: systemImage)
+                .font(.footnote.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(tint.gradient, in: .rect(cornerRadius: 8, style: .continuous))
         }
     }
 }

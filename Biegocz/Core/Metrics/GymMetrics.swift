@@ -94,10 +94,19 @@ enum LastTimeSummary: Equatable {
 
 /// Rest countdown between sets. Pure: the caller supplies `now`.
 struct RestTimer: Equatable, Sendable {
+    private(set) var startDate: Date
     private(set) var endDate: Date
 
     init(duration: TimeInterval, startingAt start: Date) {
+        startDate = start
         endDate = start.addingTimeInterval(duration)
+    }
+
+    /// 1 at the start, 0 when done; for a progress ring.
+    func fractionRemaining(at now: Date) -> Double {
+        let total = endDate.timeIntervalSince(startDate)
+        guard total > 0 else { return 0 }
+        return min(1, remaining(at: now) / total)
     }
 
     func remaining(at now: Date) -> TimeInterval {
@@ -110,6 +119,9 @@ struct RestTimer: Equatable, Sendable {
 
     /// Adds time; if the timer already ran out, counts from now.
     mutating func extend(by seconds: TimeInterval, now: Date) {
+        if endDate <= now {
+            startDate = now
+        }
         endDate = max(endDate, now).addingTimeInterval(seconds)
     }
 }

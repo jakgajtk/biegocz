@@ -17,22 +17,29 @@ struct RepeatWorkoutPickerView: View {
         NavigationStack {
             List(workouts) { workout in
                 Button {
+                    Haptics.success()
                     onPick(workout)
                     dismiss()
                 } label: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(verbatim: Formatters.dateTime(workout.startDate))
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                        Text(verbatim: workout.sortedExercises.compactMap { $0.exercise?.displayName }.joined(separator: " · "))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(3)
+                    HStack(spacing: 14) {
+                        IconBadge(systemImage: "arrow.counterclockwise", tint: .gymTint, size: 40)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(verbatim: Formatters.dateTime(workout.startDate))
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                            Text(verbatim: workout.sortedExercises.compactMap { $0.exercise?.displayName }.joined(separator: " · "))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(3)
+                        }
                     }
                     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                     .contentShape(.rect)
                 }
+                .buttonStyle(.plain)
+                .cardRow()
             }
+            .appListStyle()
             .navigationTitle("Repeat a workout")
             .navigationBarTitleDisplayMode(.inline)
             .overlay {

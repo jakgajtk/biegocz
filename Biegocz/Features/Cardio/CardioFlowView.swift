@@ -23,6 +23,7 @@ struct CardioFlowView: View {
                             }
                         }
                 }
+                .onAppear { Haptics.success() }
             } else {
                 CardioLiveView(model: session, onDiscard: { coordinator.closeCardio() })
             }

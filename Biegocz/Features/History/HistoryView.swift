@@ -11,13 +11,33 @@ struct HistoryView: View {
         return activities.filter { $0.type == filter }
     }
 
+    /// Newest month first, activities newest first within each.
+    private var months: [(month: Date, activities: [Activity])] {
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: filtered) { activity in
+            calendar.dateInterval(of: .month, for: activity.startDate)?.start ?? activity.startDate
+        }
+        return grouped.keys.sorted(by: >).map { ($0, grouped[$0] ?? []) }
+    }
+
     var body: some View {
         NavigationStack {
-            List(filtered) { activity in
-                NavigationLink(value: activity) {
-                    ActivityRow(activity: activity)
+            List {
+                ForEach(months, id: \.month) { month in
+                    Section {
+                        ForEach(month.activities) { activity in
+                            NavigationLink(value: activity) {
+                                ActivityRow(activity: activity)
+                            }
+                            .cardRow()
+                        }
+                    } header: {
+                        Text(verbatim: month.month.formatted(.dateTime.month(.wide).year()))
+                    }
                 }
             }
+            .appListStyle()
+            .animation(Design.spring, value: filter)
             .navigationTitle("History")
             .navigationDestination(for: Activity.self) { activity in
                 ActivityDetailView(activity: activity)
@@ -32,14 +52,16 @@ struct HistoryView: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
                 .padding(.bottom, 8)
+                .onChange(of: filter) { Haptics.selection() }
             }
             .overlay {
                 if filtered.isEmpty {
-                    ContentUnavailableView(
-                        "No activities yet",
-                        systemImage: "clock",
-                        description: Text("Finished workouts, runs and rides show up here.")
-                    )
+                    ContentUnavailableView {
+                        Label("No activities yet", systemImage: filter?.systemImage ?? "sparkles")
+                            .symbolEffect(.bounce, value: filter)
+                    } description: {
+                        Text("Finished workouts, runs and rides show up here.")
+                    }
                 }
             }
         }
@@ -50,29 +72,35 @@ private struct ActivityRow: View {
     let activity: Activity
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: activity.type.systemImage)
-                .font(.title2)
-                .frame(width: 36)
-                .foregroundStyle(.tint)
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: 14) {
+            IconBadge(systemImage: activity.type.systemImage, tint: activity.type.tint, size: 46)
+            VStack(alignment: .leading, spacing: 3) {
                 Text(activity.type.title)
                     .font(.headline)
-                Text(verbatim: Formatters.dateTime(activity.startDate))
+                Text(verbatim: Formatters.dayAndTime(activity.startDate))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 3) {
+                Group {
+                    if activity.type.isCardio {
+                        Text(verbatim: Formatters.distance(meters: activity.distanceMeters))
+                    } else {
+                        Text("\(activity.completedSetCount) sets")
+                    }
+                }
+                .font(.system(.headline, design: .rounded, weight: .bold))
+                Text(verbatim: Formatters.duration(seconds: activity.type.isCardio ? activity.movingSeconds : activity.elapsedSeconds))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            Spacer()
-            Group {
-                if activity.type.isCardio {
-                    Text(verbatim: Formatters.distance(meters: activity.distanceMeters))
-                } else {
-                    Text("\(activity.completedSetCount) sets")
-                }
-            }
-            .font(.subheadline.weight(.semibold))
             .monospacedDigit()
         }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
     }
 }
 

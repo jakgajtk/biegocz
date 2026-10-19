@@ -20,10 +20,11 @@ struct SetRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Text(verbatim: number.formatted())
-                .font(.headline)
+                .font(.subheadline.weight(.bold))
                 .monospacedDigit()
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 18)
+                .foregroundStyle(set.isDone ? Color.white : Color.secondary)
+                .frame(width: 26, height: 26)
+                .background(set.isDone ? Color.success : Color.cardFill, in: .circle)
                 .accessibilityLabel(Text("Set \(number)"))
 
             switch loggingType {
@@ -39,10 +40,15 @@ struct SetRow: View {
 
             Spacer(minLength: 0)
 
-            Button(action: onToggleDone) {
+            Button {
+                if !set.isDone { Haptics.success() } else { Haptics.tap() }
+                withAnimation(Design.bouncy) { onToggleDone() }
+            } label: {
                 Image(systemName: set.isDone ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 34))
-                    .foregroundStyle(set.isDone ? Color.green : Color.secondary)
+                    .font(.system(size: 36, weight: .medium))
+                    .foregroundStyle(set.isDone ? Color.success : Color.secondary.opacity(0.5))
+                    .contentTransition(.symbolEffect(.replace))
+                    .symbolEffect(.bounce, value: set.isDone)
                     .frame(minWidth: 48, minHeight: 48)
                     .contentShape(.rect)
             }
@@ -50,7 +56,13 @@ struct SetRow: View {
             .accessibilityLabel(set.isDone ? Text("Mark set as not done") : Text("Mark set as done"))
         }
         .padding(.vertical, 4)
-        .listRowBackground(set.isDone ? Color.green.opacity(0.12) : nil)
+        .listRowBackground(
+            ZStack {
+                Color.cardBackground
+                Color.success.opacity(set.isDone ? 0.12 : 0)
+            }
+        )
+        .animation(Design.spring, value: set.isDone)
     }
 
     private func weightStepper(label: LocalizedStringKey) -> some View {
@@ -63,7 +75,7 @@ struct SetRow: View {
             ),
             format: .number.precision(.fractionLength(0...2)),
             keyboard: .decimalPad,
-            width: 62,
+            width: 60,
             field: .weight(set.id),
             focusedField: focusedField,
             decrement: { set.weightKg = WeightStepper.step(set.weightKg, by: weightStep, up: false); onChange() },
@@ -81,7 +93,7 @@ struct SetRow: View {
             ),
             format: .number.precision(.fractionLength(0)),
             keyboard: .numberPad,
-            width: 40,
+            width: 38,
             field: .reps(set.id),
             focusedField: focusedField,
             decrement: { set.reps = max(0, (set.reps ?? 0) - 1); onChange() },
@@ -124,17 +136,17 @@ private struct NumberStepper: View {
         HStack(spacing: 2) {
             stepButton("minus", action: decrement)
                 .accessibilityLabel(Text("Decrease"))
-            VStack(spacing: 0) {
+            VStack(spacing: -2) {
                 TextField(label, value: $value, format: format, prompt: Text(verbatim: "0"))
                     .keyboardType(keyboard)
                     .multilineTextAlignment(.center)
-                    .font(.title3.weight(.semibold))
+                    .font(.system(.title3, design: .rounded, weight: .bold))
                     .monospacedDigit()
                     .focused(focusedField, equals: field)
                     .frame(width: width)
                 if let unit {
                     Text(unit)
-                        .font(.caption2)
+                        .font(.caption2.weight(.medium))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -146,13 +158,17 @@ private struct NumberStepper: View {
     }
 
     private func stepButton(_ systemImage: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button {
+            Haptics.selection()
+            action()
+        } label: {
             Image(systemName: systemImage)
                 .font(.body.weight(.bold))
+                .foregroundStyle(.tint)
                 .frame(width: 34, height: 44)
-                .background(.fill.tertiary, in: .rect(cornerRadius: 10))
+                .background(.cardFill, in: .rect(cornerRadius: 12, style: .continuous))
                 .contentShape(.rect)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressable)
     }
 }

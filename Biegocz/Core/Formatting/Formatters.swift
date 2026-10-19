@@ -14,6 +14,11 @@ enum Formatters {
         date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).year().hour().minute().locale(locale))
     }
 
+    /// Without the year, for lists already grouped by month, e.g. "niedz., 18 paź, 07:30".
+    static func dayAndTime(_ date: Date, locale: Locale = appLocale) -> String {
+        date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute().locale(locale))
+    }
+
     static func distance(meters: Double, locale: Locale = .autoupdatingCurrent) -> String {
         Measurement(value: meters / 1000, unit: UnitLength.kilometers).formatted(
             .measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(2)))

@@ -25,15 +25,19 @@ struct RootView: View {
                 ExerciseLibraryView()
             }
         }
+        .fontDesign(.rounded)
         .fullScreenCover(isPresented: Binding(
             get: { coordinator.hasActiveSession },
             set: { _ in }
         )) {
-            if let model = coordinator.gymSession {
-                GymSessionView(model: model, onClose: coordinator.closeGym)
-            } else {
-                CardioFlowView()
+            Group {
+                if let model = coordinator.gymSession {
+                    GymSessionView(model: model, onClose: coordinator.closeGym)
+                } else {
+                    CardioFlowView()
+                }
             }
+            .fontDesign(.rounded)
         }
         .task {
             #if DEBUG

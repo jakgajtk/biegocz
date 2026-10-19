@@ -30,22 +30,30 @@ struct ExerciseEditorView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Name", text: $name)
-                    .textInputAutocapitalization(.sentences)
+                Section {
+                    TextField("Name", text: $name)
+                        .font(.title3.weight(.semibold))
+                        .textInputAutocapitalization(.sentences)
+                }
+                .cardRow()
 
                 if isCreating {
-                    Picker("Muscle group", selection: $muscleGroup) {
-                        ForEach(MuscleGroup.allCases) { group in
-                            Text(group.title).tag(group)
+                    Section {
+                        Picker("Muscle group", selection: $muscleGroup) {
+                            ForEach(MuscleGroup.allCases) { group in
+                                Text(group.title).tag(group)
+                            }
+                        }
+                        Picker("Logging type", selection: $loggingType) {
+                            ForEach(LoggingType.allCases) { type in
+                                Text(type.title).tag(type)
+                            }
                         }
                     }
-                    Picker("Logging type", selection: $loggingType) {
-                        ForEach(LoggingType.allCases) { type in
-                            Text(type.title).tag(type)
-                        }
-                    }
+                    .cardRow()
                 }
             }
+            .appListStyle()
             .navigationTitle(isCreating ? Text("New exercise") : Text("Rename exercise"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

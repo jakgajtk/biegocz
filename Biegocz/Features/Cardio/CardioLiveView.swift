@@ -6,26 +6,37 @@ struct CardioLiveView: View {
     @State private var isConfirmingDiscard = false
 
     private var engine: CardioEngine { model.engine }
+    private var isRunning: Bool { engine.state == .running }
+    private var tint: Color { model.type.tint }
 
     var body: some View {
         VStack(spacing: 0) {
-            RouteMap(segments: engine.segments, current: model.lastFix, followsCurrent: true)
+            RouteMap(segments: engine.segments, current: model.lastFix, followsCurrent: true, tint: tint)
                 .frame(maxHeight: .infinity)
+                .overlay(alignment: .bottom) {
+                    // Soft fade from the map into the panel.
+                    LinearGradient(colors: [.clear, .appBackground], startPoint: .top, endPoint: .bottom)
+                        .frame(height: 40)
+                        .allowsHitTesting(false)
+                }
                 .overlay(alignment: .top) {
-                    if engine.state != .running {
+                    if !isRunning {
                         StatusBanner(state: engine.state)
                             .padding(.top, 8)
+                            .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
 
-            VStack(spacing: 16) {
+            VStack(spacing: 14) {
                 VStack(spacing: 0) {
                     Text("Time")
-                        .font(.subheadline)
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
                     Text(verbatim: Formatters.duration(seconds: engine.elapsedTime(at: model.now)))
-                        .font(.system(size: 64, weight: .bold, design: .rounded))
+                        .font(.system(size: 68, weight: .heavy, design: .rounded))
                         .monospacedDigit()
+                        .contentTransition(.numericText())
                         .minimumScaleFactor(0.6)
                         .lineLimit(1)
                 }
@@ -33,7 +44,7 @@ struct CardioLiveView: View {
 
                 Grid(horizontalSpacing: 12, verticalSpacing: 12) {
                     GridRow {
-                        MetricTile(title: "Distance", value: Formatters.distance(meters: engine.distance))
+                        MetricTile(title: "Distance", value: Formatters.distance(meters: engine.distance), emphasized: true, tint: tint)
                         if model.type == .run {
                             MetricTile(title: "Pace", value: paceText(engine.currentSpeed(at: model.now)))
                         } else {
@@ -49,12 +60,15 @@ struct CardioLiveView: View {
                         }
                     }
                 }
+                .opacity(isRunning ? 1 : 0.55)
 
                 controls
             }
             .padding()
-            .background(.background)
+            .background(Color.appBackground)
         }
+        .animation(Design.spring, value: engine.state)
+        .animation(Design.spring, value: model.now)
         .confirmationDialog(
             "Discard this activity?",
             isPresented: $isConfirmingDiscard,
@@ -72,27 +86,22 @@ struct CardioLiveView: View {
     @ViewBuilder
     private var controls: some View {
         HStack(spacing: 12) {
-            if engine.state == .paused {
-                Button {
+            Button {
+                Haptics.firm()
+                if engine.state == .paused {
                     model.resume()
-                } label: {
-                    Label("Resume", systemImage: "play.fill")
-                        .font(.title2.weight(.bold))
-                        .frame(maxWidth: .infinity, minHeight: 72)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.green)
-            } else {
-                Button {
+                } else {
                     model.pause()
-                } label: {
-                    Label("Pause", systemImage: "pause.fill")
-                        .font(.title2.weight(.bold))
-                        .frame(maxWidth: .infinity, minHeight: 72)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(.orange)
+            } label: {
+                Label {
+                    Text(engine.state == .paused ? "Resume" : "Pause")
+                } icon: {
+                    Image(systemName: engine.state == .paused ? "play.fill" : "pause.fill")
+                        .contentTransition(.symbolEffect(.replace))
+                }
             }
+            .buttonStyle(.prominent(engine.state == .paused ? .success : .warning, height: 72))
 
             HoldToConfirmButton(title: "Finish", caption: "Hold", systemImage: "stop.fill") {
                 model.finish()
@@ -102,7 +111,9 @@ struct CardioLiveView: View {
             Button("Discard", role: .destructive) {
                 isConfirmingDiscard = true
             }
+            .font(.subheadline.weight(.semibold))
             .frame(minHeight: 44)
+            .transition(.opacity)
         }
     }
 
@@ -120,21 +131,25 @@ struct CardioLiveView: View {
 private struct MetricTile: View {
     let title: LocalizedStringKey
     let value: String
+    var emphasized = false
+    var tint: Color = .accentColor
 
     var body: some View {
         VStack(spacing: 2) {
             Text(title)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(emphasized ? tint : .secondary)
+                .textCase(.uppercase)
             Text(verbatim: value)
-                .font(.system(size: 32, weight: .semibold, design: .rounded))
+                .font(.system(size: 30, weight: .bold, design: .rounded))
                 .monospacedDigit()
+                .contentTransition(.numericText())
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .background(.fill.tertiary, in: .rect(cornerRadius: 14))
+        .padding(.vertical, 12)
+        .background(.cardBackground, in: .rect(cornerRadius: Design.smallCornerRadius + 4, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 }
@@ -147,11 +162,14 @@ private struct StatusBanner: View {
             Text(state == .autoPaused ? "Auto-paused" : "Paused")
         } icon: {
             Image(systemName: "pause.circle.fill")
+                .symbolEffect(.pulse, options: .repeating)
         }
         .font(.headline)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(.regularMaterial, in: .capsule)
+        .foregroundStyle(.white)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 10)
+        .background(Color.warning.gradient, in: .capsule)
+        .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
     }
 }
 
@@ -165,39 +183,45 @@ struct HoldToConfirmButton: View {
     let action: () -> Void
 
     @State private var progress: CGFloat = 0
+    @State private var isPressing = false
 
     var body: some View {
         VStack(spacing: 0) {
             Label(title, systemImage: systemImage)
-                .font(.title2.weight(.bold))
+                .font(.title3.weight(.bold))
             Text(caption)
                 .font(.caption.weight(.semibold))
                 .opacity(0.85)
         }
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 72)
-            .background {
-                GeometryReader { geometry in
-                    ZStack(alignment: .leading) {
-                        Rectangle().fill(Color.red.opacity(0.55))
-                        Rectangle().fill(Color.red)
-                            .frame(width: geometry.size.width * progress)
-                    }
+        .foregroundStyle(.white)
+        .frame(maxWidth: .infinity, minHeight: 72)
+        .background {
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    Rectangle().fill(Color.danger.opacity(0.55))
+                    Rectangle().fill(Color.danger)
+                        .frame(width: geometry.size.width * progress)
                 }
             }
-            .clipShape(.capsule)
-            .contentShape(.capsule)
-            .onLongPressGesture(minimumDuration: duration) {
-                progress = 0
-                action()
-            } onPressingChanged: { pressing in
-                withAnimation(pressing ? .linear(duration: duration) : .easeOut(duration: 0.2)) {
-                    progress = pressing ? 1 : 0
-                }
+        }
+        .clipShape(.capsule)
+        .contentShape(.capsule)
+        .scaleEffect(isPressing ? 0.96 : 1)
+        .animation(Design.spring, value: isPressing)
+        .onLongPressGesture(minimumDuration: duration) {
+            progress = 0
+            Haptics.success()
+            action()
+        } onPressingChanged: { pressing in
+            isPressing = pressing
+            if pressing { Haptics.tap() }
+            withAnimation(pressing ? .linear(duration: duration) : .easeOut(duration: 0.2)) {
+                progress = pressing ? 1 : 0
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(title))
-            .accessibilityAddTraits(.isButton)
-            .accessibilityAction { action() }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(title))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { action() }
     }
 }

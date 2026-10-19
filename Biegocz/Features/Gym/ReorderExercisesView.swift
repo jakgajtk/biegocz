@@ -9,7 +9,9 @@ struct ReorderExercisesView: View {
             List {
                 ForEach(model.entries) { entry in
                     Text(verbatim: entry.exercise?.displayName ?? "")
+                        .font(.body.weight(.medium))
                         .frame(minHeight: 44, alignment: .leading)
+                        .cardRow()
                 }
                 .onMove { source, destination in
                     model.moveExercises(from: source, to: destination)
@@ -22,6 +24,7 @@ struct ReorderExercisesView: View {
                 }
             }
             .environment(\.editMode, .constant(.active))
+            .appListStyle()
             .navigationTitle("Reorder exercises")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

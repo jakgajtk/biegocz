@@ -29,6 +29,7 @@ struct ExerciseLibraryView: View {
                                 .swipeActions {
                                     ArchiveButton(exercise: exercise)
                                 }
+                                .cardRow()
                             }
                         } header: {
                             Text(group.title)
@@ -36,6 +37,8 @@ struct ExerciseLibraryView: View {
                     }
                 }
             }
+            .appListStyle()
+            .animation(Design.spring, value: showArchived)
             .navigationTitle("Exercises")
             .navigationDestination(for: Exercise.self) { exercise in
                 ExerciseDetailView(exercise: exercise)
@@ -69,17 +72,33 @@ private struct ExerciseRow: View {
     let exercise: Exercise
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(verbatim: exercise.displayName)
-                .foregroundStyle(exercise.isArchived ? .secondary : .primary)
-            HStack(spacing: 6) {
-                Text(exercise.loggingType.title)
-                if exercise.isArchived {
-                    Text("Archived")
+        HStack(spacing: 12) {
+            IconBadge(systemImage: loggingIcon, tint: exercise.isArchived ? .secondary : .gymTint, size: 36)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: exercise.displayName)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(exercise.isArchived ? .secondary : .primary)
+                HStack(spacing: 6) {
+                    Text(exercise.loggingType.title)
+                    if exercise.isArchived {
+                        Text("Archived")
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 1)
+                            .background(.cardFill, in: .capsule)
+                    }
                 }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 2)
+    }
+
+    private var loggingIcon: String {
+        switch exercise.loggingType {
+        case .weightReps: "scalemass"
+        case .bodyweightReps: "figure.core.training"
+        case .duration: "timer"
         }
     }
 }
