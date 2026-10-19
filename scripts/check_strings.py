@@ -22,6 +22,7 @@ INFOPLIST_KEYS = {
     "NSLocationWhenInUseUsageDescription",
     "NSHealthShareUsageDescription",
     "NSHealthUpdateUsageDescription",
+    "NSMotionUsageDescription",
 }
 
 

@@ -170,6 +170,44 @@ enum Pace {
     }
 }
 
+// MARK: - Elevation
+
+/// Total climb with a dead band, so sensor noise doesn't add up.
+/// Approximate by nature: barometric readings drift with the weather and
+/// GPS altitude is much noisier.
+struct ElevationGain: Codable, Equatable, Sendable {
+    /// Rises smaller than this (meters) are ignored.
+    var threshold: Double
+    private(set) var total: Double = 0
+    private var reference: Double?
+
+    /// Barometric altitude is precise to about a meter; GPS altitude is not.
+    static let barometric = ElevationGain(threshold: 1)
+    static let gps = ElevationGain(threshold: 4)
+
+    init(threshold: Double) {
+        self.threshold = threshold
+    }
+
+    mutating func add(altitude: Double) {
+        guard let reference else {
+            self.reference = altitude
+            return
+        }
+        if altitude >= reference + threshold {
+            total += altitude - reference
+            self.reference = altitude
+        } else if altitude < reference {
+            self.reference = altitude
+        }
+    }
+
+    /// Forget the last altitude, e.g. after a pause.
+    mutating func reset() {
+        reference = nil
+    }
+}
+
 // MARK: - Splits
 
 struct Split: Equatable, Sendable {

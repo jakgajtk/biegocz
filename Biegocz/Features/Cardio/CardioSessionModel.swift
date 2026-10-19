@@ -22,8 +22,11 @@ final class CardioSessionModel {
     /// Health recording; `nil` without Health access or after crash recovery,
     /// in which case the workout is saved to Health at the end instead.
     private var liveWorkout: (any LiveWorkout)?
+    /// Barometer for elevation gain; without it, GPS altitude is used.
+    var altitude: (any AltitudeProvider)?
     private var locationTask: Task<Void, Never>?
     private var clockTask: Task<Void, Never>?
+    private var altitudeTask: Task<Void, Never>?
     private var lastPersist = Date.distantPast
 
     private init(
@@ -107,13 +110,30 @@ final class CardioSessionModel {
                 self?.tick(at: .now)
             }
         }
+        if let altitude, altitude.isAvailable {
+            let readings = altitude.relativeAltitudeUpdates()
+            altitudeTask = Task { [weak self] in
+                for await meters in readings {
+                    self?.handleBarometricAltitude(meters)
+                }
+            }
+        }
     }
 
     func stopTracking() {
         locationTask?.cancel()
         clockTask?.cancel()
+        altitudeTask?.cancel()
         locationTask = nil
         clockTask = nil
+        altitudeTask = nil
+    }
+
+    /// Switches to the barometer on its first reading, so a denied Motion
+    /// permission simply leaves elevation on GPS altitude.
+    func handleBarometricAltitude(_ meters: Double) {
+        engine.useBarometer()
+        engine.ingestBarometricAltitude(meters)
     }
 
     func handle(_ point: RoutePoint, receivedAt time: Date) {
@@ -173,6 +193,7 @@ final class CardioSessionModel {
         activity.elapsedSeconds = engine.elapsedTime(at: end)
         activity.movingSeconds = engine.movingTime(at: end)
         activity.distanceMeters = engine.distance
+        activity.elevationGainMeters = engine.elevationGain
         activity.routeData = RouteCodec.encode(segments: engine.segments)
         activity.liveStateData = nil
         activity.isFinished = true
@@ -209,6 +230,7 @@ final class CardioSessionModel {
     private func persist(at time: Date = .now) {
         engine.savedAt = time
         activity.distanceMeters = engine.distance
+        activity.elevationGainMeters = engine.elevationGain
         activity.elapsedSeconds = engine.elapsedTime(at: time)
         activity.movingSeconds = engine.movingTime(at: time)
         activity.routeData = RouteCodec.encode(segments: engine.segments)

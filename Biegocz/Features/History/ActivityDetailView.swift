@@ -71,6 +71,9 @@ struct ActivityDetailView: View {
             } else {
                 LabeledContent("Avg speed", value: averageSpeed.map { Formatters.speed(metersPerSecond: $0) } ?? "--")
             }
+            if let gain = activity.elevationGainMeters {
+                LabeledContent("Elevation gain (approx.)", value: Formatters.elevation(meters: gain))
+            }
         }
 
         if activity.type == .run {

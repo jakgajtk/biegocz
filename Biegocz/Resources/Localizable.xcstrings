@@ -247,6 +247,58 @@
         }
       }
     },
+    "Added %lld activities." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Added %lld activity."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Added %lld activities."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dodano %lld aktywności."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dodano %lld aktywności."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dodano %lld aktywność."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dodano %lld aktywności."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Added weight" : {
       "localizations" : {
         "pl" : {
@@ -303,6 +355,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ręce"
+          }
+        }
+      }
+    },
+    "Auto-pause rides" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autopauza podczas jazdy"
+          }
+        }
+      }
+    },
+    "Auto-pause runs" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autopauza podczas biegu"
           }
         }
       }
@@ -567,6 +639,16 @@
         }
       }
     },
+    "Elevation gain (approx.)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przewyższenie (szacunkowe)"
+          }
+        }
+      }
+    },
     "Estimated 1RM" : {
       "localizations" : {
         "pl" : {
@@ -647,12 +729,12 @@
         }
       }
     },
-    "Exports everything as JSON, plus a CSV of all gym sets." : {
+    "Exports everything as JSON, plus a CSV of all gym sets. Importing a JSON export adds what's missing and never changes or deletes existing data." : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eksportuje wszystkie dane do pliku JSON, a wszystkie serie z siłowni dodatkowo do pliku CSV."
+            "value" : "Eksportuje wszystkie dane do pliku JSON, a wszystkie serie z siłowni dodatkowo do pliku CSV. Import pliku JSON dodaje tylko brakujące dane i nigdy nie zmienia ani nie usuwa istniejących."
           }
         }
       }
@@ -773,6 +855,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "przytrzymaj"
+          }
+        }
+      }
+    },
+    "Import data" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj dane"
+          }
+        }
+      }
+    },
+    "Import failed" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import się nie udał"
+          }
+        }
+      }
+    },
+    "Import finished" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import zakończony"
           }
         }
       }
@@ -1057,6 +1169,16 @@
         }
       }
     },
+    "Pauses when you stop moving and resumes when you move again." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstrzymuje pomiar, gdy się zatrzymasz, i wznawia, gdy znowu ruszysz."
+          }
+        }
+      }
+    },
     "Recently used" : {
       "localizations" : {
         "pl" : {
@@ -1197,6 +1319,16 @@
         }
       }
     },
+    "Run and ride" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bieg i rower"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "pl" : {
@@ -1307,6 +1439,16 @@
         }
       }
     },
+    "Skipped %lld already in the app." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominięto już zapisane w aplikacji: %lld."
+          }
+        }
+      }
+    },
     "Speed" : {
       "localizations" : {
         "pl" : {
@@ -1373,6 +1515,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To ćwiczenie jest zarchiwizowane i nie pojawia się na liście wyboru."
+          }
+        }
+      }
+    },
+    "This file isn't a Biegocz export or was made by a newer version of the app." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten plik nie jest eksportem z Biegocza albo pochodzi z nowszej wersji aplikacji."
           }
         }
       }

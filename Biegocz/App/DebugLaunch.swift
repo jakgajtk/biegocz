@@ -101,6 +101,7 @@ enum DemoData {
         activity.elapsedSeconds = engine.elapsedTime(at: end)
         activity.movingSeconds = engine.movingTime(at: end)
         activity.distanceMeters = engine.distance
+        activity.elevationGainMeters = engine.elevationGain
         activity.routeData = RouteCodec.encode(segments: engine.segments)
         activity.isFinished = true
         context.insert(activity)

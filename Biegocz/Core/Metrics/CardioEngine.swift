@@ -22,6 +22,9 @@ struct CardioEngine: Codable, Equatable, Sendable {
     private var lastMovementAt: Date?
     private(set) var filter: LocationFilter
     private(set) var smoother: SpeedSmoother
+    /// Climb so far. Fed by the barometer when available, else by GPS altitude.
+    private(set) var elevation = ElevationGain.gps
+    private(set) var usesBarometer = false
     /// Time of the last persisted snapshot, used when recovering after a crash.
     var savedAt: Date?
 
@@ -31,6 +34,7 @@ struct CardioEngine: Codable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case activityType, startDate, autoPauseEnabled, autoPauseDelay, state, distance
         case accumulatedMovingTime, movingSince, lastMovementAt, filter, smoother, savedAt
+        case elevation, usesBarometer
     }
 
     init(activityType: ActivityType, startDate: Date, autoPauseEnabled: Bool = false) {
@@ -69,12 +73,28 @@ struct CardioEngine: Codable, Equatable, Sendable {
 
     // MARK: Events
 
+    var elevationGain: Double { elevation.total }
+
     mutating func pause(at now: Date) {
         guard state != .paused else { return }
         stopMovingClock(at: now)
         state = .paused
         filter.reset()
         smoother.reset()
+        elevation.reset()
+    }
+
+    /// Switches elevation to the barometer. Call before the first reading.
+    mutating func useBarometer() {
+        guard !usesBarometer else { return }
+        usesBarometer = true
+        elevation = .barometric
+    }
+
+    /// A barometric altitude reading (relative meters). Ignored while paused.
+    mutating func ingestBarometricAltitude(_ meters: Double) {
+        guard usesBarometer, state != .paused else { return }
+        elevation.add(altitude: meters)
     }
 
     mutating func resume(at now: Date) {
@@ -115,6 +135,9 @@ struct CardioEngine: Codable, Equatable, Sendable {
             segments[segments.count - 1].append(point)
             lastMovementAt = point.timestamp
             smoother.add(time: point.timestamp, totalDistance: distance)
+            if !usesBarometer {
+                elevation.add(altitude: point.altitude)
+            }
         case .stationary:
             if state == .running {
                 smoother.add(time: point.timestamp, totalDistance: distance)

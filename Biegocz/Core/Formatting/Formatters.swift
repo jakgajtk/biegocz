@@ -28,6 +28,14 @@ enum Formatters {
         )
     }
 
+    /// Whole meters, e.g. "42 m".
+    static func elevation(meters: Double, locale: Locale = .autoupdatingCurrent) -> String {
+        Measurement(value: meters.rounded(), unit: UnitLength.meters).formatted(
+            .measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(0)))
+                .locale(locale)
+        )
+    }
+
     static func speed(metersPerSecond: Double, locale: Locale = .autoupdatingCurrent) -> String {
         Measurement(value: metersPerSecond * 3.6, unit: UnitSpeed.kilometersPerHour).formatted(
             .measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(1)))

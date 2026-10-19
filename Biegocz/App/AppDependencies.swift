@@ -7,17 +7,19 @@ import Foundation
 final class AppDependencies {
     let location: any LocationProvider
     let health: any HealthStore
+    let altitude: any AltitudeProvider
 
-    init(location: any LocationProvider, health: any HealthStore) {
+    init(location: any LocationProvider, health: any HealthStore, altitude: any AltitudeProvider) {
         self.location = location
         self.health = health
+        self.altitude = altitude
     }
 
     static func live() -> AppDependencies {
         #if targetEnvironment(simulator)
-        AppDependencies(location: GPXReplayLocationProvider(), health: NoOpHealthStore())
+        AppDependencies(location: GPXReplayLocationProvider(), health: NoOpHealthStore(), altitude: NoAltitudeProvider())
         #else
-        AppDependencies(location: CoreLocationProvider(), health: HealthKitStore())
+        AppDependencies(location: CoreLocationProvider(), health: HealthKitStore(), altitude: BarometerAltitudeProvider())
         #endif
     }
 }

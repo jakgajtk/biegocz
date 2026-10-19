@@ -16,11 +16,18 @@ final class SessionCoordinator {
     private let restNotifier: RestNotifying
     private let location: any LocationProvider
     private let health: any HealthStore
+    private let altitude: any AltitudeProvider
 
-    init(restNotifier: RestNotifying, location: any LocationProvider, health: any HealthStore) {
+    init(
+        restNotifier: RestNotifying,
+        location: any LocationProvider,
+        health: any HealthStore,
+        altitude: any AltitudeProvider = NoAltitudeProvider()
+    ) {
         self.restNotifier = restNotifier
         self.location = location
         self.health = health
+        self.altitude = altitude
     }
 
     var hasActiveSession: Bool {
@@ -70,6 +77,7 @@ final class SessionCoordinator {
             health: health,
             autoPause: AppSettings.autoPause(for: setup.type)
         )
+        session.altitude = altitude
         session.startTracking()
         cardioSession = session
         cardioSetup = nil
@@ -113,6 +121,7 @@ final class SessionCoordinator {
         case .run, .ride:
             endAbandonedHealthSession()
             let session = CardioSessionModel.recover(activity, in: context, location: location, health: health)
+            session.altitude = altitude
             session.startTracking()
             cardioSession = session
         }
