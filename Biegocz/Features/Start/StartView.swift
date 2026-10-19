@@ -17,10 +17,12 @@ struct StartView: View {
                     StartButton(title: ActivityType.gym.title, systemImage: ActivityType.gym.systemImage) {
                         coordinator.startGym(in: modelContext)
                     }
-                    StartButton(title: ActivityType.run.title, systemImage: ActivityType.run.systemImage) {}
-                        .disabled(true)
-                    StartButton(title: ActivityType.ride.title, systemImage: ActivityType.ride.systemImage) {}
-                        .disabled(true)
+                    StartButton(title: ActivityType.run.title, systemImage: ActivityType.run.systemImage) {
+                        coordinator.prepareCardio(.run)
+                    }
+                    StartButton(title: ActivityType.ride.title, systemImage: ActivityType.ride.systemImage) {
+                        coordinator.prepareCardio(.ride)
+                    }
                     StartButton(title: "Repeat a previous workout", systemImage: "arrow.counterclockwise") {
                         isPickingWorkoutToRepeat = true
                     }
@@ -103,5 +105,5 @@ private struct WeekSummaryCard: View {
 #Preview {
     StartView()
         .modelContainer(try! PersistenceController.makeContainer(inMemory: true))
-        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier()))
+        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier(), location: GPXReplayLocationProvider()))
 }

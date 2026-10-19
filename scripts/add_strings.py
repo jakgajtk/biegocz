@@ -6,7 +6,8 @@
 The JSON maps each key to either
   - a string: the Polish translation (English is the key itself), or
   - an object {"en": [one, other], "pl": [one, few, many, other]} for plurals, or
-  - an object {"en": "...", "pl": "...", "manual": true} for keys not extracted from code.
+  - an object {"en": "...", "pl": "...", "manual": true} for keys not extracted from code, or
+  - null to remove the key.
 Existing entries are replaced.
 """
 import json
@@ -41,7 +42,10 @@ def main():
     additions = json.loads(Path(sys.argv[1]).read_text())
     doc = json.loads(CATALOG.read_text())
     for key, value in additions.items():
-        doc["strings"][key] = entry_for(value)
+        if value is None:
+            doc["strings"].pop(key, None)
+        else:
+            doc["strings"][key] = entry_for(value)
     text = json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True, separators=(",", " : "))
     CATALOG.write_text(text + "\n")
     print(f"Merged {len(additions)} strings.")

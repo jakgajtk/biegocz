@@ -22,7 +22,8 @@ enum DataExporter {
                 )
             },
             activities: activities.map { activity in
-                ActivityRecord(
+                let segments = activity.routeSegments
+                return ActivityRecord(
                     id: activity.id,
                     type: activity.typeRaw,
                     startDate: activity.startDate,
@@ -34,7 +35,8 @@ enum DataExporter {
                     movingSeconds: activity.movingSeconds,
                     distanceMeters: activity.distanceMeters,
                     elevationGainMeters: activity.elevationGainMeters,
-                    route: activity.routePoints,
+                    route: segments.flatMap { $0 },
+                    routeSegmentStarts: segments.count > 1 ? segmentStarts(of: segments) : nil,
                     exercises: activity.sortedExercises.map { entry in
                         WorkoutExerciseRecord(
                             id: entry.id,
@@ -105,6 +107,16 @@ enum DataExporter {
         try jsonData(for: document).write(to: jsonURL, options: .atomic)
         try Data(gymSetsCSV(for: document).utf8).write(to: csvURL, options: .atomic)
         return [jsonURL, csvURL]
+    }
+
+    private static func segmentStarts(of segments: [[RoutePoint]]) -> [Int] {
+        var starts: [Int] = []
+        var index = 0
+        for segment in segments {
+            starts.append(index)
+            index += segment.count
+        }
+        return starts
     }
 
     private static func csvEscaped(_ value: String) -> String {

@@ -15,7 +15,7 @@ enum DebugLaunch {
         case gym, picker, summary
         case exerciseDetail
         case activityDetail
-        case run, ride
+        case prestart, run, ride
     }
 
     static var usesDemoData: Bool {
@@ -74,7 +74,36 @@ enum DemoData {
                 activity.isFinished = true
             }
         }
+
+        // A run yesterday and a ride two days ago, from the sample routes.
+        insertCardio(.run, route: "SampleRun", daysAgo: 1, into: context)
+        insertCardio(.ride, route: "SampleRide", daysAgo: 2, into: context)
         try? context.save()
+    }
+
+    private static func insertCardio(_ type: ActivityType, route: String, daysAgo: Int, into context: ModelContext) {
+        guard let url = Bundle.main.url(forResource: route, withExtension: "gpx"),
+              let data = try? Data(contentsOf: url),
+              let points = try? GPXParser.parse(data),
+              let first = points.first, let last = points.last
+        else { return }
+        let start = Calendar.current.date(byAdding: .day, value: -daysAgo, to: .now)!
+        let shift = start.timeIntervalSince(first.timestamp)
+        var engine = CardioEngine(activityType: type, startDate: start)
+        for point in points {
+            var shifted = point
+            shifted.timestamp = point.timestamp.addingTimeInterval(shift)
+            engine.ingest(shifted, receivedAt: shifted.timestamp)
+        }
+        let end = last.timestamp.addingTimeInterval(shift)
+        let activity = Activity(type: type, startDate: start)
+        activity.endDate = end
+        activity.elapsedSeconds = engine.elapsedTime(at: end)
+        activity.movingSeconds = engine.movingTime(at: end)
+        activity.distanceMeters = engine.distance
+        activity.routeData = RouteCodec.encode(segments: engine.segments)
+        activity.isFinished = true
+        context.insert(activity)
     }
 
     private static func add(_ exercise: Exercise, to activity: Activity, order: Int, sets: [SetValues], start: Date) {

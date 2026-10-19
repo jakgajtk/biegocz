@@ -3,11 +3,18 @@ import SwiftUI
 
 @main
 struct BiegoczApp: App {
-    @State private var dependencies = AppDependencies.live()
-    @State private var coordinator = SessionCoordinator(restNotifier: Self.makeRestNotifier())
+    @State private var dependencies: AppDependencies
+    @State private var coordinator: SessionCoordinator
     private let container: ModelContainer
 
     init() {
+        let dependencies = AppDependencies.live()
+        _dependencies = State(initialValue: dependencies)
+        _coordinator = State(initialValue: SessionCoordinator(
+            restNotifier: Self.makeRestNotifier(),
+            location: dependencies.location
+        ))
+
         #if DEBUG
         if DebugLaunch.usesDemoData {
             container = DebugLaunch.makeDemoContainer()

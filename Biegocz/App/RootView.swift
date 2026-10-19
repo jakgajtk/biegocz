@@ -26,11 +26,13 @@ struct RootView: View {
             }
         }
         .fullScreenCover(isPresented: Binding(
-            get: { coordinator.gymSession != nil },
-            set: { if !$0 { coordinator.closeGym() } }
+            get: { coordinator.hasActiveSession },
+            set: { _ in }
         )) {
             if let model = coordinator.gymSession {
                 GymSessionView(model: model, onClose: coordinator.closeGym)
+            } else {
+                CardioFlowView()
             }
         }
         .task {
@@ -119,8 +121,11 @@ extension RootView {
         case .activityDetail:
             let latest = try? modelContext.fetch(FetchDescriptor<Activity>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])).first
             if let latest { debugDestination = .activity(latest) }
+        case .prestart:
+            coordinator.prepareCardio(.run)
         case .run, .ride:
-            break
+            coordinator.prepareCardio(screen == .run ? .run : .ride)
+            coordinator.startCardio(in: modelContext)
         }
     }
 }
@@ -130,5 +135,5 @@ extension RootView {
     RootView()
         .modelContainer(try! PersistenceController.makeContainer(inMemory: true))
         .environment(AppDependencies.live())
-        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier()))
+        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier(), location: GPXReplayLocationProvider()))
 }

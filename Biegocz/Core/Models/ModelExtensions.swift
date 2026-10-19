@@ -51,8 +51,13 @@ extension Activity {
     }
 
     var routePoints: [RoutePoint] {
+        routeSegments.flatMap { $0 }
+    }
+
+    /// The route split at pauses.
+    var routeSegments: [[RoutePoint]] {
         guard let routeData else { return [] }
-        return (try? RouteCodec.decode(routeData)) ?? []
+        return (try? RouteCodec.decodeSegments(routeData)) ?? []
     }
 }
 

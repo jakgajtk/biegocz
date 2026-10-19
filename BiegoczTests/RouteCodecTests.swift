@@ -14,7 +14,7 @@ struct RouteCodecTests {
             )
         }
         let data = RouteCodec.encode(points)
-        #expect(data.count == 1 + points.count * 32)
+        #expect(data.count == 1 + points.count * 33)
 
         let decoded = try RouteCodec.decode(data)
         #expect(decoded.count == points.count)
@@ -24,6 +24,28 @@ struct RouteCodecTests {
         #expect(decoded.map(\.timestamp) == points.map(\.timestamp))
         #expect(decoded.map(\.altitude) == points.map(\.altitude))
         #expect(decoded.map(\.horizontalAccuracy) == points.map(\.horizontalAccuracy))
+    }
+
+    @Test func segmentsRoundTrip() throws {
+        func point(_ i: Int) -> RoutePoint {
+            RoutePoint(latitude: Double(i), longitude: 0, altitude: 0, timestamp: Date(timeIntervalSince1970: Double(i)), horizontalAccuracy: 5)
+        }
+        let segments = [[point(0), point(1), point(2)], [point(3)], [point(4), point(5)]]
+        #expect(try RouteCodec.decodeSegments(RouteCodec.encode(segments: segments)) == segments)
+    }
+
+    @Test func decodesVersionOneAsSingleSegment() throws {
+        // Version 1: no flags byte.
+        var data = Data([1])
+        for value in [52.0, 21.0, 1_000.0] {
+            withUnsafeBytes(of: value.bitPattern.littleEndian) { data.append(contentsOf: $0) }
+        }
+        for value: Float in [100, 5] {
+            withUnsafeBytes(of: value.bitPattern.littleEndian) { data.append(contentsOf: $0) }
+        }
+        let segments = try RouteCodec.decodeSegments(data)
+        #expect(segments.count == 1)
+        #expect(segments[0].first?.latitude == 52)
     }
 
     @Test func emptyRoute() throws {

@@ -10,4 +10,17 @@ enum AppSettings {
     static let defaultRestDuration = 120
     static let restDurationRange = 30...600
     static let restDurationStep = 15
+
+    static let autoPauseRunKey = "settings.autoPauseRun"
+    static let autoPauseRideKey = "settings.autoPauseRide"
+    static let defaultAutoPauseRun = false
+    static let defaultAutoPauseRide = true
+
+    static func autoPause(for type: ActivityType, defaults: UserDefaults = .standard) -> Bool {
+        switch type {
+        case .run: defaults.object(forKey: autoPauseRunKey) as? Bool ?? defaultAutoPauseRun
+        case .ride: defaults.object(forKey: autoPauseRideKey) as? Bool ?? defaultAutoPauseRide
+        case .gym: false
+        }
+    }
 }

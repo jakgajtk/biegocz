@@ -36,6 +36,9 @@ struct ActivityRecord: Codable, Sendable {
     var distanceMeters: Double
     var elevationGainMeters: Double?
     var route: [RoutePoint]
+    /// Indices into `route` where each segment starts (segments split at pauses).
+    /// `nil` when the whole route is one segment.
+    var routeSegmentStarts: [Int]?
     var exercises: [WorkoutExerciseRecord]
 }
 

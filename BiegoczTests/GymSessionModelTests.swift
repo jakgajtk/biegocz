@@ -166,7 +166,7 @@ struct SessionRecoveryTests {
         model.addExercise(exercise)
         model.toggleDone(model.entries[0].sortedSets[0], now: start.addingTimeInterval(600))
 
-        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier())
+        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier(), location: SilentLocationProvider())
         coordinator.findRecoverable(in: context)
         #expect(coordinator.recoverable?.id == model.activity.id)
 
@@ -180,7 +180,7 @@ struct SessionRecoveryTests {
         let context = container.mainContext
         _ = GymSessionModel.start(in: context, notifier: NoOpRestNotifier(), restDuration: 120)
 
-        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier())
+        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier(), location: SilentLocationProvider())
         coordinator.findRecoverable(in: context)
         #expect(coordinator.recoverable == nil)
         #expect(try context.fetchCount(FetchDescriptor<Activity>()) == 0)

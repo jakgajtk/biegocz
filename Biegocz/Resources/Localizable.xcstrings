@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ /km" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ /km"
+          }
+        }
+      }
+    },
     "%@ × %lld" : {
       "localizations" : {
         "pl" : {
@@ -257,6 +267,16 @@
         }
       }
     },
+    "Allow location access in Settings to record your route and distance." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Włącz dostęp do lokalizacji w Ustawieniach, aby zapisywać trasę i dystans."
+          }
+        }
+      }
+    },
     "Archive" : {
       "localizations" : {
         "pl" : {
@@ -283,6 +303,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ręce"
+          }
+        }
+      }
+    },
+    "Auto-paused" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autopauza"
+          }
+        }
+      }
+    },
+    "Avg pace" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Średnie tempo"
+          }
+        }
+      }
+    },
+    "Avg speed" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Średnia prędkość"
           }
         }
       }
@@ -437,6 +487,16 @@
         }
       }
     },
+    "Discard this activity?" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odrzucić tę aktywność?"
+          }
+        }
+      }
+    },
     "Discard this workout?" : {
       "localizations" : {
         "pl" : {
@@ -463,6 +523,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dystans"
+          }
+        }
+      }
+    },
+    "Distance may be inaccurate until the signal improves." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dystans może być niedokładny, dopóki sygnał się nie poprawi."
           }
         }
       }
@@ -637,6 +707,46 @@
         }
       }
     },
+    "GPS signal is weak" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Słaby sygnał GPS"
+          }
+        }
+      }
+    },
+    "GPS: OK" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPS: średni"
+          }
+        }
+      }
+    },
+    "GPS: good" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPS: dobry"
+          }
+        }
+      }
+    },
+    "GPS: poor" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GPS: słaby"
+          }
+        }
+      }
+    },
     "Gym" : {
       "localizations" : {
         "pl" : {
@@ -657,12 +767,32 @@
         }
       }
     },
+    "Hold" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "przytrzymaj"
+          }
+        }
+      }
+    },
     "Increase" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zwiększ"
+          }
+        }
+      }
+    },
+    "Kilometer %lld" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld. kilometr"
           }
         }
       }
@@ -723,6 +853,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nogi"
+          }
+        }
+      }
+    },
+    "Location access is off" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostęp do lokalizacji jest wyłączony"
           }
         }
       }
@@ -867,12 +1007,52 @@
         }
       }
     },
+    "Open Settings" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz Ustawienia"
+          }
+        }
+      }
+    },
     "Options" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Opcje"
+          }
+        }
+      }
+    },
+    "Pace" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo"
+          }
+        }
+      }
+    },
+    "Pause" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pauza"
+          }
+        }
+      }
+    },
+    "Paused" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wstrzymano"
           }
         }
       }
@@ -1037,6 +1217,16 @@
         }
       }
     },
+    "Searching for GPS…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukam sygnału GPS…"
+          }
+        }
+      }
+    },
     "Seconds" : {
       "localizations" : {
         "pl" : {
@@ -1117,6 +1307,26 @@
         }
       }
     },
+    "Speed" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prędkość"
+          }
+        }
+      }
+    },
+    "Splits" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Międzyczasy"
+          }
+        }
+      }
+    },
     "Start" : {
       "localizations" : {
         "pl" : {
@@ -1127,12 +1337,32 @@
         }
       }
     },
+    "Start anyway" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rozpocznij mimo to"
+          }
+        }
+      }
+    },
     "Started %@." : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rozpoczęto: %@."
+          }
+        }
+      }
+    },
+    "The route and all stats will be deleted." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trasa i wszystkie statystyki zostaną usunięte."
           }
         }
       }

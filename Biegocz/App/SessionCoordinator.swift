@@ -7,16 +7,27 @@ import SwiftData
 @Observable
 final class SessionCoordinator {
     var gymSession: GymSessionModel?
+    /// Pre-start screen of a run or ride.
+    var cardioSetup: PreStartModel?
+    var cardioSession: CardioSessionModel?
     /// An unfinished activity found on launch, waiting for Resume / Save / Discard.
     var recoverable: Activity?
 
     private let restNotifier: RestNotifying
+    private let location: any LocationProvider
 
-    init(restNotifier: RestNotifying) {
+    init(restNotifier: RestNotifying, location: any LocationProvider) {
         self.restNotifier = restNotifier
+        self.location = location
     }
 
-    var hasActiveSession: Bool { gymSession != nil }
+    var hasActiveSession: Bool {
+        gymSession != nil || cardioSetup != nil || cardioSession != nil
+    }
+
+    var isShowingCardio: Bool {
+        cardioSetup != nil || cardioSession != nil
+    }
 
     private var restDuration: TimeInterval {
         let stored = UserDefaults.standard.integer(forKey: AppSettings.restDurationKey)
@@ -37,6 +48,37 @@ final class SessionCoordinator {
 
     func closeGym() {
         gymSession = nil
+    }
+
+    // MARK: Run and ride
+
+    func prepareCardio(_ type: ActivityType) {
+        guard !hasActiveSession else { return }
+        cardioSetup = PreStartModel(type: type, location: location)
+    }
+
+    func startCardio(in context: ModelContext) {
+        guard let setup = cardioSetup else { return }
+        setup.stop()
+        let session = CardioSessionModel.start(
+            setup.type,
+            in: context,
+            location: location,
+            autoPause: AppSettings.autoPause(for: setup.type)
+        )
+        session.startTracking()
+        cardioSession = session
+        cardioSetup = nil
+    }
+
+    func cancelCardioSetup() {
+        cardioSetup?.stop()
+        cardioSetup = nil
+    }
+
+    func closeCardio() {
+        cardioSession?.stopTracking()
+        cardioSession = nil
     }
 
     // MARK: Recovery
@@ -63,7 +105,9 @@ final class SessionCoordinator {
         case .gym:
             gymSession = GymSessionModel(activity: activity, context: context, notifier: restNotifier, restDuration: restDuration)
         case .run, .ride:
-            break
+            let session = CardioSessionModel.recover(activity, in: context, location: location)
+            session.startTracking()
+            cardioSession = session
         }
     }
 
@@ -77,7 +121,9 @@ final class SessionCoordinator {
             let lastSet = activity.exercises.flatMap(\.sets).compactMap(\.completedAt).max()
             model.finish(now: lastSet ?? activity.startDate)
         case .run, .ride:
-            break
+            let session = CardioSessionModel.recover(activity, in: context, location: location)
+            // End at the last snapshot taken before the app stopped.
+            session.finish(at: session.engine.savedAt ?? activity.startDate)
         }
     }
 
