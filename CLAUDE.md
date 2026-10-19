@@ -30,6 +30,12 @@ Biegocz is a personal iOS app for logging gym workouts (exercises, sets, reps, w
 - After every meaningful change: build with XcodeBuildMCP, fix all errors and warnings, run tests.
 - Never ship a SwiftData schema change without a new `VersionedSchema` and a migration stage. Losing my training history is the worst possible bug.
 
+## Tooling
+
+- Until XcodeBuildMCP is installed, build with `scripts/build.sh` (build) or `scripts/build.sh test` (build + tests + failure messages). Both use the iPhone 17 simulator and `build/DerivedData`.
+- After a build, `python3 scripts/check_strings.py` must report 0 problems: every string used in code is in the catalog, and every catalog entry has Polish (all plural forms).
+- Dynamic keys the compiler can't extract (e.g. `exercise.<key>`) go into the catalog with `"extractionState" : "manual"`.
+
 ## Architecture
 
 ```
