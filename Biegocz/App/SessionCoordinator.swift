@@ -15,18 +15,16 @@ final class SessionCoordinator {
 
     private let restNotifier: RestNotifying
     private let location: any LocationProvider
+    private let health: any HealthStore
 
-    init(restNotifier: RestNotifying, location: any LocationProvider) {
+    init(restNotifier: RestNotifying, location: any LocationProvider, health: any HealthStore) {
         self.restNotifier = restNotifier
         self.location = location
+        self.health = health
     }
 
     var hasActiveSession: Bool {
         gymSession != nil || cardioSetup != nil || cardioSession != nil
-    }
-
-    var isShowingCardio: Bool {
-        cardioSetup != nil || cardioSession != nil
     }
 
     private var restDuration: TimeInterval {
@@ -38,23 +36,28 @@ final class SessionCoordinator {
 
     func startGym(in context: ModelContext) {
         guard !hasActiveSession else { return }
-        gymSession = .start(in: context, notifier: restNotifier, restDuration: restDuration)
+        gymSession = makeGym(.start(in: context, notifier: restNotifier, restDuration: restDuration))
     }
 
     func repeatGym(_ past: Activity, in context: ModelContext) {
         guard !hasActiveSession else { return }
-        gymSession = .repeating(past, in: context, notifier: restNotifier, restDuration: restDuration)
+        gymSession = makeGym(.repeating(past, in: context, notifier: restNotifier, restDuration: restDuration))
     }
 
     func closeGym() {
         gymSession = nil
     }
 
+    private func makeGym(_ model: GymSessionModel) -> GymSessionModel {
+        model.health = health
+        return model
+    }
+
     // MARK: Run and ride
 
     func prepareCardio(_ type: ActivityType) {
         guard !hasActiveSession else { return }
-        cardioSetup = PreStartModel(type: type, location: location)
+        cardioSetup = PreStartModel(type: type, location: location, health: health)
     }
 
     func startCardio(in context: ModelContext) {
@@ -64,6 +67,7 @@ final class SessionCoordinator {
             setup.type,
             in: context,
             location: location,
+            health: health,
             autoPause: AppSettings.autoPause(for: setup.type)
         )
         session.startTracking()
@@ -103,9 +107,12 @@ final class SessionCoordinator {
         recoverable = nil
         switch activity.type {
         case .gym:
-            gymSession = GymSessionModel(activity: activity, context: context, notifier: restNotifier, restDuration: restDuration)
+            gymSession = makeGym(GymSessionModel(
+                activity: activity, context: context, notifier: restNotifier, restDuration: restDuration
+            ))
         case .run, .ride:
-            let session = CardioSessionModel.recover(activity, in: context, location: location)
+            endAbandonedHealthSession()
+            let session = CardioSessionModel.recover(activity, in: context, location: location, health: health)
             session.startTracking()
             cardioSession = session
         }
@@ -116,12 +123,15 @@ final class SessionCoordinator {
         recoverable = nil
         switch activity.type {
         case .gym:
-            let model = GymSessionModel(activity: activity, context: context, notifier: restNotifier, restDuration: restDuration)
+            let model = makeGym(GymSessionModel(
+                activity: activity, context: context, notifier: restNotifier, restDuration: restDuration
+            ))
             // End at the last completed set rather than now, which may be hours later.
             let lastSet = activity.exercises.flatMap(\.sets).compactMap(\.completedAt).max()
             model.finish(now: lastSet ?? activity.startDate)
         case .run, .ride:
-            let session = CardioSessionModel.recover(activity, in: context, location: location)
+            endAbandonedHealthSession()
+            let session = CardioSessionModel.recover(activity, in: context, location: location, health: health)
             // End at the last snapshot taken before the app stopped.
             session.finish(at: session.engine.savedAt ?? activity.startDate)
         }
@@ -130,7 +140,16 @@ final class SessionCoordinator {
     func discardRecoverable(in context: ModelContext) {
         guard let activity = recoverable else { return }
         recoverable = nil
+        if activity.type.isCardio {
+            endAbandonedHealthSession()
+        }
         context.delete(activity)
         try? context.save()
+    }
+
+    /// A Health session from before a crash can't be continued reliably; end it.
+    /// The recovered activity is saved to Health from our own data when finished.
+    private func endAbandonedHealthSession() {
+        Task { [health] in await health.endAbandonedLiveWorkout() }
     }
 }

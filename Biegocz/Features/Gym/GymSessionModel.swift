@@ -20,6 +20,10 @@ final class GymSessionModel {
     var restDuration: TimeInterval
     private(set) var restTimer: RestTimer?
     private(set) var summary: WorkoutSummary?
+    /// Where finished workouts are saved; `nil` skips Health (tests, previews).
+    var health: (any HealthStore)?
+    /// The pending Health save after `finish`, for tests.
+    private(set) var healthSave: Task<Void, Never>?
 
     init(activity: Activity, context: ModelContext, notifier: RestNotifying, restDuration: TimeInterval) {
         self.activity = activity
@@ -170,6 +174,12 @@ final class GymSessionModel {
         skipRest()
         save()
         summary = WorkoutSummary(duration: duration, setCount: activity.completedSetCount, volumeKg: activity.totalVolumeKg)
+
+        if let health, health.isAvailable {
+            healthSave = Task { [activity, context] in
+                await HealthSync.save(activity, using: health, context: context)
+            }
+        }
     }
 
     func discard() {

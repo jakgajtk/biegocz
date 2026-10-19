@@ -135,5 +135,7 @@ extension RootView {
     RootView()
         .modelContainer(try! PersistenceController.makeContainer(inMemory: true))
         .environment(AppDependencies.live())
-        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier(), location: GPXReplayLocationProvider()))
+        .environment(SessionCoordinator(
+            restNotifier: NoOpRestNotifier(), location: GPXReplayLocationProvider(), health: NoOpHealthStore()
+        ))
 }

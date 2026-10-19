@@ -9,16 +9,20 @@ final class PreStartModel {
     private(set) var quality = GPSQuality.none
 
     private let location: any LocationProvider
+    private let health: any HealthStore
     private var task: Task<Void, Never>?
 
-    init(type: ActivityType, location: any LocationProvider) {
+    init(type: ActivityType, location: any LocationProvider, health: any HealthStore) {
         self.type = type
         self.location = location
+        self.health = health
         self.authorization = location.authorization
     }
 
     func start() async {
         authorization = await location.requestAuthorization()
+        // First time a run or ride starts is when Health access is first needed.
+        await health.requestAuthorization()
         guard authorization == .authorized, task == nil else { return }
         let updates = location.locationUpdates(for: type)
         task = Task { [weak self] in

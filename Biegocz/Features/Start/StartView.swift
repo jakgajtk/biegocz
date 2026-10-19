@@ -105,5 +105,7 @@ private struct WeekSummaryCard: View {
 #Preview {
     StartView()
         .modelContainer(try! PersistenceController.makeContainer(inMemory: true))
-        .environment(SessionCoordinator(restNotifier: NoOpRestNotifier(), location: GPXReplayLocationProvider()))
+        .environment(SessionCoordinator(
+            restNotifier: NoOpRestNotifier(), location: GPXReplayLocationProvider(), health: NoOpHealthStore()
+        ))
 }

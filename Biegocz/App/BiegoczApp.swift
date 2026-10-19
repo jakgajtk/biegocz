@@ -12,7 +12,8 @@ struct BiegoczApp: App {
         _dependencies = State(initialValue: dependencies)
         _coordinator = State(initialValue: SessionCoordinator(
             restNotifier: Self.makeRestNotifier(),
-            location: dependencies.location
+            location: dependencies.location,
+            health: dependencies.health
         ))
 
         #if DEBUG

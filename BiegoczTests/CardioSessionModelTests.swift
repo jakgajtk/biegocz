@@ -21,7 +21,7 @@ struct CardioSessionModelTests {
     }
 
     @Test func persistsAboutEveryTenSeconds() throws {
-        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), autoPause: false, now: start)
+        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), health: NoOpHealthStore(), autoPause: false, now: start)
         feed(model, seconds: 25)
 
         #expect(model.activity.liveStateData != nil)
@@ -32,7 +32,7 @@ struct CardioSessionModelTests {
     }
 
     @Test func finishSavesTotalsAndClearsLiveState() {
-        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), autoPause: false, now: start)
+        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), health: NoOpHealthStore(), autoPause: false, now: start)
         feed(model, seconds: 120)
         model.finish(at: start.addingTimeInterval(120))
 
@@ -44,27 +44,27 @@ struct CardioSessionModelTests {
     }
 
     @Test func crashRecoveryResumesPausedFromLastSnapshot() throws {
-        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), autoPause: false, now: start)
+        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), health: NoOpHealthStore(), autoPause: false, now: start)
         feed(model, seconds: 35)
         let activityID = model.activity.id
         // The app dies here: anything after the 30 s snapshot is lost.
 
-        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier(), location: SilentLocationProvider())
+        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier(), location: SilentLocationProvider(), health: NoOpHealthStore())
         coordinator.findRecoverable(in: context)
         let recoverable = try #require(coordinator.recoverable)
         #expect(recoverable.id == activityID)
 
-        let recovered = CardioSessionModel.recover(recoverable, in: context, location: SilentLocationProvider())
+        let recovered = CardioSessionModel.recover(recoverable, in: context, location: SilentLocationProvider(), health: NoOpHealthStore())
         #expect(recovered.engine.state == .paused)
         #expect(recovered.engine.movingTime(at: .now) == 30)
         #expect(abs(recovered.engine.distance - 90) < 10)
     }
 
     @Test func saveFromRecoveryEndsAtLastSnapshot() throws {
-        let model = CardioSessionModel.start(.ride, in: context, location: SilentLocationProvider(), autoPause: false, now: start)
+        let model = CardioSessionModel.start(.ride, in: context, location: SilentLocationProvider(), health: NoOpHealthStore(), autoPause: false, now: start)
         feed(model, seconds: 45, speed: 7)
 
-        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier(), location: SilentLocationProvider())
+        let coordinator = SessionCoordinator(restNotifier: NoOpRestNotifier(), location: SilentLocationProvider(), health: NoOpHealthStore())
         coordinator.findRecoverable(in: context)
         coordinator.saveRecoverable(in: context)
 
@@ -74,7 +74,7 @@ struct CardioSessionModelTests {
     }
 
     @Test func discardDeletesTheActivity() throws {
-        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), autoPause: false, now: start)
+        let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), health: NoOpHealthStore(), autoPause: false, now: start)
         feed(model, seconds: 15)
         model.discard()
         #expect(try context.fetchCount(FetchDescriptor<Activity>()) == 0)

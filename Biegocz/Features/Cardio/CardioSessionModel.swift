@@ -18,15 +18,27 @@ final class CardioSessionModel {
 
     private let context: ModelContext
     private let location: any LocationProvider
+    private let health: any HealthStore
+    /// Health recording; `nil` without Health access or after crash recovery,
+    /// in which case the workout is saved to Health at the end instead.
+    private var liveWorkout: (any LiveWorkout)?
     private var locationTask: Task<Void, Never>?
     private var clockTask: Task<Void, Never>?
     private var lastPersist = Date.distantPast
 
-    private init(activity: Activity, engine: CardioEngine, context: ModelContext, location: any LocationProvider, now: Date) {
+    private init(
+        activity: Activity,
+        engine: CardioEngine,
+        context: ModelContext,
+        location: any LocationProvider,
+        health: any HealthStore,
+        now: Date
+    ) {
         self.activity = activity
         self.engine = engine
         self.context = context
         self.location = location
+        self.health = health
         self.now = now
     }
 
@@ -34,24 +46,45 @@ final class CardioSessionModel {
         _ type: ActivityType,
         in context: ModelContext,
         location: any LocationProvider,
+        health: any HealthStore,
         autoPause: Bool,
         now: Date = .now
     ) -> CardioSessionModel {
         let activity = Activity(type: type, startDate: now)
         context.insert(activity)
         let engine = CardioEngine(activityType: type, startDate: now, autoPauseEnabled: autoPause)
-        let model = CardioSessionModel(activity: activity, engine: engine, context: context, location: location, now: now)
+        let model = CardioSessionModel(
+            activity: activity, engine: engine, context: context, location: location, health: health, now: now
+        )
         model.persist()
+        Task { [weak model] in
+            let live = await health.startLiveWorkout(type, at: now)
+            guard let model, !model.isFinished else {
+                live?.discard()
+                return
+            }
+            model.liveWorkout = live
+            if model.engine.state != .running {
+                live?.pause(at: .now)
+            }
+        }
         return model
     }
 
     /// Rebuilds an unfinished session from its last snapshot, paused.
-    static func recover(_ activity: Activity, in context: ModelContext, location: any LocationProvider) -> CardioSessionModel {
+    static func recover(
+        _ activity: Activity,
+        in context: ModelContext,
+        location: any LocationProvider,
+        health: any HealthStore
+    ) -> CardioSessionModel {
         var engine = activity.liveStateData
             .flatMap { try? JSONDecoder().decode(CardioEngine.self, from: $0) }
             ?? CardioEngine(activityType: activity.type, startDate: activity.startDate)
         engine.recover(segments: activity.routeSegments)
-        let model = CardioSessionModel(activity: activity, engine: engine, context: context, location: location, now: .now)
+        let model = CardioSessionModel(
+            activity: activity, engine: engine, context: context, location: location, health: health, now: .now
+        )
         model.lastFix = activity.routePoints.last
         return model
     }
@@ -87,28 +120,47 @@ final class CardioSessionModel {
         if point.horizontalAccuracy >= 0 {
             lastFix = point
         }
+        let before = engine.state
         engine.ingest(point, receivedAt: time)
+        syncHealthState(from: before, at: time)
         persistIfDue(at: time)
     }
 
     func tick(at time: Date) {
         now = time
+        let before = engine.state
         engine.tick(at: time)
+        syncHealthState(from: before, at: time)
         persistIfDue(at: time)
     }
 
     // MARK: Controls
 
     func pause(at time: Date = .now) {
+        let before = engine.state
         engine.pause(at: time)
         now = time
+        syncHealthState(from: before, at: time)
         persist(at: time)
     }
 
     func resume(at time: Date = .now) {
+        let before = engine.state
         engine.resume(at: time)
         now = time
+        syncHealthState(from: before, at: time)
         persist(at: time)
+    }
+
+    /// Mirrors pause / auto-pause into the Health session.
+    private func syncHealthState(from before: CardioEngine.State, at time: Date) {
+        let wasRunning = before == .running
+        let isRunning = engine.state == .running
+        if wasRunning && !isRunning {
+            liveWorkout?.pause(at: time)
+        } else if !wasRunning && isRunning {
+            liveWorkout?.resume(at: time)
+        }
     }
 
     /// Saves the activity as finished. `time` defaults to now; recovery passes the last snapshot.
@@ -126,10 +178,22 @@ final class CardioSessionModel {
         activity.isFinished = true
         try? context.save()
         isFinished = true
+
+        let live = liveWorkout
+        liveWorkout = nil
+        guard health.isAvailable else { return }
+        healthSave = Task { [activity, health, context] in
+            await HealthSync.save(activity, using: health, live: live, context: context)
+        }
     }
+
+    /// The pending Health save after `finish`, for tests.
+    private(set) var healthSave: Task<Void, Never>?
 
     func discard() {
         stopTracking()
+        liveWorkout?.discard()
+        liveWorkout = nil
         context.delete(activity)
         try? context.save()
     }

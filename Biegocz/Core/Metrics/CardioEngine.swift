@@ -93,7 +93,7 @@ struct CardioEngine: Codable, Equatable, Sendable {
         let decision = filter.process(point, receivedAt: now)
 
         switch decision {
-        case .accepted(let stepDistance):
+        case .accepted(var stepDistance):
             if state == .autoPaused {
                 // Drift while standing still isn't movement: only resume when the
                 // step since the last accepted point implies moving speed.
@@ -103,6 +103,12 @@ struct CardioEngine: Codable, Equatable, Sendable {
                 }
                 state = .running
                 movingSince = point.timestamp
+                // The new stretch starts here; the few meters bridging the stop
+                // aren't counted, so the distance always equals the segments' length.
+                stepDistance = 0
+                startNewSegment()
+            } else if stepDistance == 0, previous != nil {
+                // The filter re-anchored after a bad fix: don't draw or count the jump.
                 startNewSegment()
             }
             distance += stepDistance
