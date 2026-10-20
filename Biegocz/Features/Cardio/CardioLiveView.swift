@@ -33,7 +33,8 @@ struct CardioLiveView: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
                         .textCase(.uppercase)
-                    Text(verbatim: Formatters.duration(seconds: engine.elapsedTime(at: model.now)))
+                    // Moving time, so the clock stops while paused, like a stopwatch.
+                    Text(verbatim: Formatters.duration(seconds: engine.movingTime(at: model.now)))
                         .font(.system(size: 68, weight: .heavy, design: .rounded))
                         .monospacedDigit()
                         .contentTransition(.numericText())
@@ -52,7 +53,7 @@ struct CardioLiveView: View {
                         }
                     }
                     GridRow {
-                        MetricTile(title: "Moving time", value: Formatters.duration(seconds: engine.movingTime(at: model.now)))
+                        MetricTile(title: "Elapsed time", value: Formatters.duration(seconds: engine.elapsedTime(at: model.now)))
                         if model.type == .run {
                             MetricTile(title: "Avg pace", value: paceText(engine.averageSpeed(at: model.now)))
                         } else {

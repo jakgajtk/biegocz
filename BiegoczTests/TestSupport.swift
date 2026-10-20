@@ -40,6 +40,20 @@ enum TestSupport {
     }
 }
 
+/// A silent provider that records pause / resume calls.
+@MainActor
+final class PauseRecordingLocationProvider: LocationProvider {
+    private(set) var pauses: [Bool] = []
+    var authorization: LocationAuthorization { .authorized }
+    func requestAuthorization() async -> LocationAuthorization { .authorized }
+    func locationUpdates(for activity: ActivityType) -> AsyncStream<RoutePoint> {
+        AsyncStream { $0.finish() }
+    }
+    func sessionPaused(_ paused: Bool) {
+        pauses.append(paused)
+    }
+}
+
 /// A location provider that never emits; tests feed points directly.
 @MainActor
 final class SilentLocationProvider: LocationProvider {

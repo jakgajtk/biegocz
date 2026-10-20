@@ -14,6 +14,14 @@ final class GPXReplayLocationProvider: LocationProvider {
 
     func requestAuthorization() async -> LocationAuthorization { .authorized }
 
+    /// While paused, the last position repeats once a second and the rest of
+    /// the route is delayed by the pause.
+    private var isHolding = false
+
+    func sessionPaused(_ paused: Bool) {
+        isHolding = paused
+    }
+
     func locationUpdates(for activity: ActivityType) -> AsyncStream<RoutePoint> {
         let points = loadRoute(named: activity == .ride ? "SampleRide" : "SampleRun")
 
@@ -23,10 +31,19 @@ final class GPXReplayLocationProvider: LocationProvider {
                     continuation.finish()
                     return
                 }
-                let start = Date.now
-                for point in points {
-                    let offset = point.timestamp.timeIntervalSince(firstTime)
-                    let due = start.addingTimeInterval(offset)
+                var start = Date.now
+                var index = 0
+                var last: RoutePoint?
+                while index < points.count, !Task.isCancelled {
+                    if isHolding, var held = last {
+                        try? await Task.sleep(for: .seconds(1))
+                        start.addTimeInterval(1)
+                        held.timestamp = .now
+                        continuation.yield(held)
+                        continue
+                    }
+                    let point = points[index]
+                    let due = start.addingTimeInterval(point.timestamp.timeIntervalSince(firstTime))
                     let wait = due.timeIntervalSinceNow
                     if wait > 0 {
                         try? await Task.sleep(for: .seconds(wait))
@@ -35,6 +52,8 @@ final class GPXReplayLocationProvider: LocationProvider {
                     var replayed = point
                     replayed.timestamp = due
                     continuation.yield(replayed)
+                    last = replayed
+                    index += 1
                 }
                 continuation.finish()
             }

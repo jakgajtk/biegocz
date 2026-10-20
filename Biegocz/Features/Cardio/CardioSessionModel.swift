@@ -89,6 +89,7 @@ final class CardioSessionModel {
             activity: activity, engine: engine, context: context, location: location, health: health, now: .now
         )
         model.lastFix = activity.routePoints.last
+        location.sessionPaused(engine.state == .paused)
         return model
     }
 
@@ -160,6 +161,7 @@ final class CardioSessionModel {
         let before = engine.state
         engine.pause(at: time)
         now = time
+        location.sessionPaused(true)
         syncHealthState(from: before, at: time)
         persist(at: time)
     }
@@ -168,6 +170,7 @@ final class CardioSessionModel {
         let before = engine.state
         engine.resume(at: time)
         now = time
+        location.sessionPaused(false)
         syncHealthState(from: before, at: time)
         persist(at: time)
     }

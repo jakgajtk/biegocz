@@ -31,6 +31,19 @@ struct CardioSessionModelTests {
         #expect(model.activity.routePoints.count > 10)
     }
 
+    @Test func pauseStopsTheClockAndTellsTheLocationProvider() {
+        let location = PauseRecordingLocationProvider()
+        let model = CardioSessionModel.start(.run, in: context, location: location, health: NoOpHealthStore(), autoPause: false, now: start)
+        feed(model, seconds: 60)
+        model.pause(at: start.addingTimeInterval(60))
+        // Still moving along while paused: nothing counts.
+        feed(model, seconds: 60, from: 60)
+        #expect(model.engine.movingTime(at: start.addingTimeInterval(120)) == 60)
+        #expect(abs(model.engine.distance - 180) < 10)
+        model.resume(at: start.addingTimeInterval(120))
+        #expect(location.pauses == [true, false])
+    }
+
     @Test func finishSavesTotalsAndClearsLiveState() {
         let model = CardioSessionModel.start(.run, in: context, location: SilentLocationProvider(), health: NoOpHealthStore(), autoPause: false, now: start)
         feed(model, seconds: 120)
