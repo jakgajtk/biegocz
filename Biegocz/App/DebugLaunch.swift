@@ -16,6 +16,8 @@ enum DebugLaunch {
         case exerciseDetail
         case activityDetail
         case prestart, run, ride
+        /// Pre-start with the route suggestions open (needs the network).
+        case routes
     }
 
     static var usesDemoData: Bool {

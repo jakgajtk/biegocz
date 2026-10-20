@@ -9,11 +9,17 @@ struct RouteMap: View {
     /// Keeps the camera on `current` (live screen); otherwise frames the whole route.
     var followsCurrent = false
     var tint: Color = .accentColor
+    /// A planned route, drawn as a dashed guide under the recorded one.
+    var planned: [Coordinate] = []
 
     @State private var position = MapCameraPosition.automatic
 
     var body: some View {
         Map(position: $position) {
+            if planned.count > 1 {
+                MapPolyline(coordinates: planned.map(\.clCoordinate))
+                    .stroke(tint.opacity(0.55), style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round, dash: [2, 9]))
+            }
             ForEach(Array(segments.enumerated()), id: \.offset) { _, segment in
                 if segment.count > 1 {
                     MapPolyline(coordinates: segment.map(\.coordinate))
@@ -101,6 +107,12 @@ private struct RouteEndpoint: View {
 
 extension RoutePoint {
     var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+}
+
+extension Coordinate {
+    var clCoordinate: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
 }

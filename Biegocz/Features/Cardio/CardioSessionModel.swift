@@ -15,6 +15,8 @@ final class CardioSessionModel {
     /// Last valid fix, for the map marker.
     private(set) var lastFix: RoutePoint?
     private(set) var isFinished = false
+    /// A suggested route picked before starting, drawn as a guide. Not persisted.
+    var plannedRoute: [Coordinate] = []
 
     private let context: ModelContext
     private let location: any LocationProvider

@@ -130,7 +130,7 @@ extension RootView {
         case .activityDetail:
             let latest = try? modelContext.fetch(FetchDescriptor<Activity>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])).first
             if let latest { debugDestination = .activity(latest) }
-        case .prestart:
+        case .prestart, .routes:
             coordinator.prepareCardio(.run)
         case .run, .ride:
             coordinator.prepareCardio(screen == .run ? .run : .ride)

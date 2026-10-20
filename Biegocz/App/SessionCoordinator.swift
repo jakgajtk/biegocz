@@ -78,6 +78,7 @@ final class SessionCoordinator {
             autoPause: AppSettings.autoPause(for: setup.type)
         )
         session.altitude = altitude
+        session.plannedRoute = setup.plannedRoute?.coordinates ?? []
         session.startTracking()
         cardioSession = session
         cardioSetup = nil

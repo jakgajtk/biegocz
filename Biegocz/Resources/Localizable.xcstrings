@@ -479,6 +479,26 @@
         }
       }
     },
+    "Change" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zmień"
+          }
+        }
+      }
+    },
+    "Check your internet connection, or try another distance." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprawdź połączenie z internetem albo wybierz inny dystans."
+          }
+        }
+      }
+    },
     "Chest" : {
       "localizations" : {
         "pl" : {
@@ -861,6 +881,16 @@
         }
       }
     },
+    "Finding a route…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Szukam trasy…"
+          }
+        }
+      }
+    },
     "Finish" : {
       "localizations" : {
         "pl" : {
@@ -997,6 +1027,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Siłownia"
+          }
+        }
+      }
+    },
+    "Heads east" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na wschód"
+          }
+        }
+      }
+    },
+    "Heads north" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na północ"
+          }
+        }
+      }
+    },
+    "Heads northeast" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na północny wschód"
+          }
+        }
+      }
+    },
+    "Heads northwest" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na północny zachód"
+          }
+        }
+      }
+    },
+    "Heads south" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na południe"
+          }
+        }
+      }
+    },
+    "Heads southeast" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na południowy wschód"
+          }
+        }
+      }
+    },
+    "Heads southwest" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na południowy zachód"
+          }
+        }
+      }
+    },
+    "Heads west" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na zachód"
           }
         }
       }
@@ -1211,6 +1321,16 @@
         }
       }
     },
+    "Loop" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pętla"
+          }
+        }
+      }
+    },
     "Mark at least one set as done to finish." : {
       "localizations" : {
         "pl" : {
@@ -1321,6 +1441,16 @@
         }
       }
     },
+    "No routes found nearby" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie znaleziono tras w okolicy"
+          }
+        }
+      }
+    },
     "No sessions yet" : {
       "localizations" : {
         "pl" : {
@@ -1381,6 +1511,16 @@
         }
       }
     },
+    "Other directions" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inne kierunki"
+          }
+        }
+      }
+    },
     "Pace" : {
       "localizations" : {
         "pl" : {
@@ -1437,6 +1577,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Usuń ćwiczenie"
+          }
+        }
+      }
+    },
+    "Remove route" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usuń trasę"
           }
         }
       }
@@ -1771,6 +1921,16 @@
         }
       }
     },
+    "Suggested routes" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proponowane trasy"
+          }
+        }
+      }
+    },
     "Tap to skip" : {
       "localizations" : {
         "pl" : {
@@ -1861,6 +2021,16 @@
         }
       }
     },
+    "Try again" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spróbuj ponownie"
+          }
+        }
+      }
+    },
     "Unarchive" : {
       "localizations" : {
         "pl" : {
@@ -1901,6 +2071,16 @@
         }
       }
     },
+    "Use this route" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz tę trasę"
+          }
+        }
+      }
+    },
     "Version" : {
       "localizations" : {
         "pl" : {
@@ -1917,6 +2097,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tonaż"
+          }
+        }
+      }
+    },
+    "Waiting for location…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Czekam na lokalizację…"
           }
         }
       }

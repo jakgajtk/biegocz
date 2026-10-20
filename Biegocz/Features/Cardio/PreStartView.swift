@@ -1,3 +1,4 @@
+import MapKit
 import SwiftUI
 
 struct PreStartView: View {
@@ -7,6 +8,8 @@ struct PreStartView: View {
 
     @Environment(\.openURL) private var openURL
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(AppDependencies.self) private var dependencies
+    @State private var routeSuggestions: RouteSuggestionsModel?
     @State private var isConfirmingWeakSignal = false
     @State private var countdown: Int?
     @State private var countdownTask: Task<Void, Never>?
@@ -44,6 +47,8 @@ struct PreStartView: View {
                 } else {
                     GPSQualityBadge(quality: model.quality)
                         .appearEffect(delay: 0.1)
+                    routePlanning
+                        .appearEffect(delay: 0.15)
                 }
 
                 Spacer()
@@ -88,6 +93,59 @@ struct PreStartView: View {
                 Text("Distance may be inaccurate until the signal improves.")
             }
         }
+    }
+
+    @ViewBuilder
+    private var routePlanning: some View {
+        Group {
+            if let route = model.plannedRoute {
+                PlannedRouteCard(route: route, tint: tint) {
+                    showSuggestions()
+                } onRemove: {
+                    Haptics.tap()
+                    model.plannedRoute = nil
+                }
+                .transition(.scale(scale: 0.9).combined(with: .opacity))
+            } else {
+                Button(action: showSuggestions) {
+                    Label {
+                        Text(model.position == nil ? "Waiting for location…" : "Suggested routes")
+                    } icon: {
+                        Image(systemName: "point.topright.arrow.triangle.backward.to.point.bottomleft.scurvepath.fill")
+                    }
+                    .font(.headline)
+                    .foregroundStyle(tint)
+                    .padding(.horizontal, 20)
+                    .frame(minHeight: 48)
+                    .background(tint.opacity(0.14), in: .capsule)
+                }
+                .buttonStyle(.pressable)
+                .disabled(model.position == nil)
+            }
+        }
+        .padding(.horizontal)
+        .animation(Design.spring, value: model.plannedRoute)
+        #if DEBUG
+        .onChange(of: model.position != nil) { _, hasPosition in
+            if hasPosition, DebugLaunch.screen == .routes, routeSuggestions == nil { showSuggestions() }
+        }
+        #endif
+        .sheet(item: $routeSuggestions) { suggestions in
+            RouteSuggestionsView(model: suggestions) { route in
+                model.plannedRoute = route
+            }
+        }
+    }
+
+    private func showSuggestions() {
+        guard let position = model.position else { return }
+        Haptics.tap()
+        routeSuggestions = RouteSuggestionsModel(
+            type: model.type,
+            start: position,
+            directions: dependencies.directions,
+            bearingOffset: Double.random(in: 0..<120)
+        )
     }
 
     private var startButton: some View {
@@ -145,6 +203,51 @@ struct PreStartView: View {
         countdown = nil
         Haptics.success()
         onStart()
+    }
+}
+
+private struct PlannedRouteCard: View {
+    let route: SuggestedRoute
+    let tint: Color
+    let onChange: () -> Void
+    let onRemove: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Map(initialPosition: .automatic, interactionModes: []) {
+                MapPolyline(coordinates: route.coordinates.map(\.clCoordinate))
+                    .stroke(tint, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
+            }
+            .mapStyle(.standard(emphasis: .muted, pointsOfInterest: .excludingAll))
+            .frame(height: 130)
+            .allowsHitTesting(false)
+
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(verbatim: Formatters.distance(meters: route.distance))
+                        .font(.headline)
+                        .monospacedDigit()
+                    Text(Compass.heading(route.bearing))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button("Change", action: onChange)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(tint)
+                Button(action: onRemove) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title2)
+                        .foregroundStyle(.secondary)
+                        .frame(minWidth: 44, minHeight: 44)
+                }
+                .accessibilityLabel(Text("Remove route"))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+        }
+        .background(.cardBackground)
+        .clipShape(.rect(cornerRadius: Design.cornerRadius, style: .continuous))
     }
 }
 

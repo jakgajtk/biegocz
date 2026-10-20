@@ -19,9 +19,9 @@ enum Formatters {
         date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute().locale(locale))
     }
 
-    static func distance(meters: Double, locale: Locale = .autoupdatingCurrent) -> String {
+    static func distance(meters: Double, fractionDigits: Int = 2, locale: Locale = .autoupdatingCurrent) -> String {
         Measurement(value: meters / 1000, unit: UnitLength.kilometers).formatted(
-            .measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(2)))
+            .measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(fractionDigits)))
                 .locale(locale)
         )
     }

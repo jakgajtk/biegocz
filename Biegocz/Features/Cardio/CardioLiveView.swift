@@ -11,7 +11,7 @@ struct CardioLiveView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            RouteMap(segments: engine.segments, current: model.lastFix, followsCurrent: true, tint: tint)
+            RouteMap(segments: engine.segments, current: model.lastFix, followsCurrent: true, tint: tint, planned: model.plannedRoute)
                 .frame(maxHeight: .infinity)
                 .overlay(alignment: .bottom) {
                     // Soft fade from the map into the panel.
