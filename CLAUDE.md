@@ -51,7 +51,8 @@ Biegocz is a personal iOS app for logging gym workouts (exercises, sets, reps, w
 ```
 App/                 entry point, tab view, dependency setup
 Core/Models/         SwiftData models + VersionedSchema + SchemaMigrationPlan
-Core/Persistence/    model container, seed data, JSON export/import
+Core/Persistence/    model container, seed data, JSON export/import, history import
+Core/Import/         PURE GPX/TCX/FIT/gzip readers and track → activity conversion
 Core/Metrics/        PURE Swift logic, no SwiftUI/SwiftData/CoreLocation imports
 Core/Location/       LocationProvider protocol, real (CoreLocation) + GPX replay fake
 Core/Health/         HealthStore protocol, real (HealthKit) + no-op fake
@@ -140,10 +141,20 @@ Stop at the end of each phase. Give me a short list of what to test on a real de
 3. **Run and ride**: location pipeline, metrics engine with tests, live screen, map, pause/resume, background tracking, crash recovery, save + detail screen, 2 GPX sample routes (a ~5 km run loop and a ~20 km ride).
 4. **HealthKit**: authorization, workout session on iPhone, save all three activity types with routes, graceful handling when access is denied.
 5. **Polish**: auto-pause (setting; default off for runs, on for rides), elevation gain (prefer `CMAltimeter`, label as approximate), JSON import, history filters.
+6. **History import**: import past runs and rides with their maps from GPX, TCX and FIT files (plain or `.gz`), as found in a Strava account export or downloaded from MapMyRun.
+
+## History import (Phase 6)
+
+- Settings → "Import from Strava or MapMyRun": pick a folder (searched recursively) or files. Strava: the unzipped account export. MapMyRun has no bulk route export; `scripts/mapmyrun_export.py` downloads one TCX per workout using the browser session cookie.
+- The route files are the source of truth. Strava's `activities.csv` is ignored: its headers and date formats depend on the account language.
+- Runs and rides only; other sports and tracks without GPS are skipped. Without a sport in the file, the type is inferred from average speed.
+- Points go through the same `LocationFilter` as live tracking. A recording gap over 60 s starts a new segment (a pause). Distance and moving time come from the file's totals when it has them (TCX laps, FIT session), otherwise from the cleaned track.
+- Duplicates: an activity of the same type starting within 2 minutes of an existing one is skipped, so re-importing or overlapping services add nothing. No schema change.
+- Imported activities are never written to Health (they are usually there already).
 
 ## Out of scope for v1
 
-Apple Watch app, heart rate, accounts, backend or iCloud sync, social features, training plans, AI anything, widgets and Live Activities, Strava or GPX import/export, indoor activities, Android.
+Apple Watch app, heart rate, accounts, backend or iCloud sync, social features, training plans, AI anything, widgets and Live Activities, Strava API sync, GPX export, indoor activities, Android.
 
 ## Later (ideas, do not build)
 

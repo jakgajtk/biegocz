@@ -27,6 +27,7 @@ A personal iPhone app for logging gym workouts and GPS-tracked runs and rides. E
 **Everywhere**
 - Saves workouts and routes to Apple Health, if you allow it. The app works fully without it.
 - Export everything as JSON (plus a CSV of all gym sets) and import it back.
+- Import past runs and rides, with maps, from a Strava account export or MapMyRun (GPX, TCX and FIT files, also gzipped). Duplicates are skipped.
 - Full Polish translation with correct plural forms and a decimal comma ("5,2 km").
 - Dark mode, haptics and animations that respect Reduce Motion.
 
@@ -67,6 +68,12 @@ Other scripts:
 | `scripts/make_colors.py` | Generate the color palette asset sets |
 | `scripts/make_icon.swift` | Render the app icon |
 | `scripts/make_sample_gpx.py` | Generate the simulator GPX routes |
+| `scripts/mapmyrun_export.py` | Download your MapMyRun workouts as TCX files for importing |
+
+### Importing history
+
+- **Strava**: on strava.com, go to Settings → My Account → Download or Delete Your Account and request your archive. Unzip the email attachment (the Files app can do it), then in Biegocz choose Settings → Import from Strava or MapMyRun and pick the folder.
+- **MapMyRun**: there's no bulk export with routes. Log in at mapmyrun.com, copy the `Cookie` request header from your browser's developer tools into a file, and run `python3 scripts/mapmyrun_export.py build/mapmyrun_cookie.txt build/mapmyrun`. It downloads one TCX file per workout. Copy the folder to your iPhone and import it the same way, then delete the cookie file.
 
 ### Project layout
 
@@ -75,6 +82,7 @@ Biegocz/
   App/              entry point, tabs, session coordinator, design system
   Core/Models/      SwiftData models, versioned schema, migration plan
   Core/Persistence/ store, seed data, route encoding, JSON/CSV export and import
+  Core/Import/      GPX, TCX and FIT readers for importing history
   Core/Metrics/     pure logic: GPS filtering, pace, splits, auto-pause, e1RM, prefill
   Core/Location/    location and altitude providers (real + simulator fakes)
   Core/Health/      HealthKit store (real + no-op) and saving workouts

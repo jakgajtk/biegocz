@@ -469,6 +469,26 @@
         }
       }
     },
+    "Choose the unzipped Strava export folder, or GPX, TCX or FIT files. Runs and rides are added with their maps; ones already in the app are skipped, and nothing is written to Health." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz rozpakowany folder eksportu ze Stravy albo pliki GPX, TCX lub FIT. Biegi i jazdy rowerowe trafią do aplikacji razem z mapami. Te, które już tu są, zostaną pominięte, a do Zdrowia nic nie zostanie zapisane."
+          }
+        }
+      }
+    },
+    "Choose the unzipped Strava export, or a folder of GPX, TCX or FIT files." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wybierz rozpakowany eksport ze Stravy albo folder z plikami GPX, TCX lub FIT."
+          }
+        }
+      }
+    },
     "Close" : {
       "localizations" : {
         "pl" : {
@@ -485,6 +505,58 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Brzuch"
+          }
+        }
+      }
+    },
+    "Couldn't read %lld files." : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Couldn't read %lld file."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Couldn't read %lld files."
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nie udało się odczytać %lld plików."
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nie udało się odczytać %lld plików."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nie udało się odczytać %lld pliku."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nie udało się odczytać %lld pliku."
+                }
+              }
+            }
           }
         }
       }
@@ -939,6 +1011,26 @@
         }
       }
     },
+    "Import from Strava or MapMyRun" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importuj ze Stravy lub MapMyRun"
+          }
+        }
+      }
+    },
+    "Importing %lld of %lld" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importowanie: %1$lld z %2$lld"
+          }
+        }
+      }
+    },
     "Increase" : {
       "localizations" : {
         "pl" : {
@@ -1145,6 +1237,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Brak aktywności"
+          }
+        }
+      }
+    },
+    "No activity files found" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie znaleziono plików z aktywnościami"
           }
         }
       }
@@ -1409,6 +1511,16 @@
         }
       }
     },
+    "Run and ride history" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Historia biegów i jazd"
+          }
+        }
+      }
+    },
     "Save" : {
       "localizations" : {
         "pl" : {
@@ -1535,6 +1647,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pominięto już zapisane w aplikacji: %lld."
+          }
+        }
+      }
+    },
+    "Skipped (other sports or no GPS): %lld." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pominięto (inne sporty lub brak GPS): %lld."
           }
         }
       }
@@ -1765,6 +1887,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trening zapisany"
+          }
+        }
+      }
+    },
+    "Your activities could not be imported. Please try again." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie udało się zaimportować aktywności. Spróbuj ponownie."
           }
         }
       }
