@@ -177,6 +177,58 @@
         }
       }
     },
+    "%lld weeks" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld weeks"
+                }
+              }
+            }
+          }
+        },
+        "pl" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tygodnie"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tygodni"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tydzień"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tygodnia"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "+%@ × %lld" : {
       "localizations" : {
         "pl" : {
@@ -455,6 +507,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Najlepsza seria"
+          }
+        }
+      }
+    },
+    "Biggest climb" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Największe przewyższenie"
+          }
+        }
+      }
+    },
+    "Biggest workout" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Największy trening"
           }
         }
       }
@@ -877,6 +949,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Eksportuje wszystkie dane do pliku JSON, a wszystkie serie z siłowni dodatkowo do pliku CSV. Import pliku JSON dodaje tylko brakujące dane i nigdy nie zmienia ani nie usuwa istniejących."
+          }
+        }
+      }
+    },
+    "Fastest ride (10 km+)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najszybsza jazda (10 km+)"
+          }
+        }
+      }
+    },
+    "Fastest run (5 km+)" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najszybszy bieg (5 km+)"
           }
         }
       }
@@ -1321,6 +1413,26 @@
         }
       }
     },
+    "Longest ride" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najdłuższa jazda"
+          }
+        }
+      }
+    },
+    "Longest run" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najdłuższy bieg"
+          }
+        }
+      }
+    },
     "Loop" : {
       "localizations" : {
         "pl" : {
@@ -1557,6 +1669,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wstrzymuje pomiar, gdy się zatrzymasz, i wznawia, gdy znowu ruszysz."
+          }
+        }
+      }
+    },
+    "Period" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okres"
+          }
+        }
+      }
+    },
+    "Personal bests" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rekordy"
           }
         }
       }
@@ -1921,6 +2053,16 @@
         }
       }
     },
+    "Streak" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seria"
+          }
+        }
+      }
+    },
     "Suggested routes" : {
       "localizations" : {
         "pl" : {
@@ -1981,12 +2123,32 @@
         }
       }
     },
+    "This month" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W tym miesiącu"
+          }
+        }
+      }
+    },
     "This week" : {
       "localizations" : {
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "W tym tygodniu"
+          }
+        }
+      }
+    },
+    "This year" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W tym roku"
           }
         }
       }
@@ -2077,6 +2239,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Wybierz tę trasę"
+          }
+        }
+      }
+    },
+    "Value" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartość"
           }
         }
       }
@@ -2979,6 +3151,66 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "s"
+          }
+        }
+      }
+    },
+    "vs the month before" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niż w poprzednim miesiącu"
+          }
+        }
+      }
+    },
+    "vs the week before" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niż w poprzednim tygodniu"
+          }
+        }
+      }
+    },
+    "vs the year before" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niż w poprzednim roku"
+          }
+        }
+      }
+    },
+    "vs this point last month" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niż miesiąc temu o tej porze"
+          }
+        }
+      }
+    },
+    "vs this point last week" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niż tydzień temu o tej porze"
+          }
+        }
+      }
+    },
+    "vs this point last year" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "niż rok temu o tej porze"
           }
         }
       }

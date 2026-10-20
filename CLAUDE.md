@@ -71,7 +71,7 @@ Resources/GPX/       sample routes for the simulator
 ## Tabs
 
 1. **Start**: buttons for Gym, Run, Ride, plus "repeat a previous gym workout". Small summary: this week's sessions and km.
-2. **History**: all activities, newest first, filter by type. Tap for detail.
+2. **History**: all activities, newest first, filter by type. Tap for detail. On top, an overview that follows the filter: this week / month / year (menu) with the change against the same stretch of the previous period, a bar chart of the last periods (drag to inspect one), weekly streak, and personal bests (longest/fastest run and ride, biggest climb, biggest gym volume) linking to the activity. Month headers show the month's distance and time. Pure math in `Core/Metrics/HistoryStats.swift`.
 3. **Exercises**: exercise library, search, per-exercise history.
 4. **Settings**: appearance (automatic / light / dark), language (device / English / Polski, stored as the app's `AppleLanguages`, applies on next launch), gym and run settings, data export/import, history import.
 
@@ -164,4 +164,3 @@ Apple Watch app, heart rate, accounts, backend or iCloud sync, social features, 
 - GPX export
 - Apple Watch companion
 - Personal-record badge on the workout summary when a set beats the best e1RM
-- Weekly streak on the Start screen

@@ -23,6 +23,14 @@ struct HistoryView: View {
     var body: some View {
         NavigationStack {
             List {
+                if !filtered.isEmpty {
+                    Section {
+                        HistoryOverview(activities: filtered, filter: filter)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                }
                 ForEach(months, id: \.month) { month in
                     Section {
                         ForEach(month.activities) { activity in
@@ -32,7 +40,7 @@ struct HistoryView: View {
                             .cardRow()
                         }
                     } header: {
-                        Text(verbatim: month.month.formatted(.dateTime.month(.wide).year()))
+                        MonthHeader(month: month.month, activities: month.activities)
                     }
                 }
             }
@@ -64,6 +72,30 @@ struct HistoryView: View {
                     }
                 }
             }
+        }
+    }
+}
+
+/// "October 2026" with the month's distance and active time on the right.
+private struct MonthHeader: View {
+    let month: Date
+    let activities: [Activity]
+
+    var body: some View {
+        let distance = activities.reduce(0) { $0 + $1.distanceMeters }
+        let time = activities.reduce(0) { $0 + $1.summary.activeSeconds }
+        HStack {
+            Text(verbatim: month.formatted(.dateTime.month(.wide).year().locale(Formatters.appLocale)))
+            Spacer()
+            Group {
+                if distance > 0 {
+                    Text(verbatim: "\(Formatters.distance(meters: distance, fractionDigits: 1)) · \(Formatters.totalTime(seconds: time))")
+                } else {
+                    Text(verbatim: Formatters.totalTime(seconds: time))
+                }
+            }
+            .monospacedDigit()
+            .textCase(nil)
         }
     }
 }

@@ -54,6 +54,19 @@ enum Formatters {
         return Duration.seconds(seconds.rounded(.down)).formatted(.time(pattern: pattern).locale(locale))
     }
 
+    /// Hours with one decimal for totals, e.g. "10,2 godz." / "10.2 hr".
+    static func totalTime(seconds: Double, locale: Locale = .autoupdatingCurrent) -> String {
+        Measurement(value: seconds / 3600, unit: UnitDuration.hours).formatted(
+            .measurement(width: .abbreviated, usage: .asProvided, numberFormatStyle: .number.precision(.fractionLength(1)))
+                .locale(locale)
+        )
+    }
+
+    /// A signed whole percentage, e.g. "+12%".
+    static func change(_ fraction: Double, locale: Locale = .autoupdatingCurrent) -> String {
+        fraction.formatted(.percent.precision(.fractionLength(0)).sign(strategy: .always()).locale(locale))
+    }
+
     /// Minutes and seconds per kilometer, e.g. "5:12". Returns "--" when not moving.
     static func pace(secondsPerKilometer: Double?, locale: Locale = .autoupdatingCurrent) -> String {
         guard let secondsPerKilometer, secondsPerKilometer.isFinite, secondsPerKilometer > 0 else { return "--" }

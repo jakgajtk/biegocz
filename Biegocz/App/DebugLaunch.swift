@@ -80,7 +80,40 @@ enum DemoData {
         // A run yesterday and a ride two days ago, from the sample routes.
         insertCardio(.run, route: "SampleRun", daysAgo: 1, into: context)
         insertCardio(.ride, route: "SampleRide", daysAgo: 2, into: context)
+        insertPastYear(into: context, today: today)
         try? context.save()
+    }
+
+    /// A year of summary-only runs (twice a week) and rides (weekly, spring to
+    /// autumn), varied but deterministic, so the History overview has data.
+    private static func insertPastYear(into context: ModelContext, today: Date) {
+        let calendar = Calendar.current
+        for week in 1...52 {
+            let wave = sin(Double(week) / 5)
+            for (day, kilometers) in [(3, 5 + 2 * wave), (6, 9 + 3 * wave + Double(week % 4))] where week > 1 || day > 3 {
+                let daysAgo = week * 7 - day + 3
+                let start = calendar.date(byAdding: .day, value: -daysAgo, to: today)!.addingTimeInterval(7 * 3600)
+                let pace = 330 - 20 * wave - Double(52 - week) / 2 // getting a bit faster
+                insertSummary(.run, start: start, meters: kilometers * 1000, seconds: kilometers * pace, climb: 20 + 10 * wave, into: context)
+            }
+            let month = calendar.component(.month, from: calendar.date(byAdding: .day, value: -week * 7, to: today)!)
+            if (4...10).contains(month), week > 2 {
+                let kilometers = 30 + 15 * wave + Double(week % 3) * 10
+                let start = calendar.date(byAdding: .day, value: -(week * 7 + 1), to: today)!.addingTimeInterval(9 * 3600)
+                insertSummary(.ride, start: start, meters: kilometers * 1000, seconds: kilometers * 1000 / (7.5 + wave), climb: 150 + 80 * wave, into: context)
+            }
+        }
+    }
+
+    private static func insertSummary(_ type: ActivityType, start: Date, meters: Double, seconds: Double, climb: Double, into context: ModelContext) {
+        let activity = Activity(type: type, startDate: start)
+        activity.endDate = start.addingTimeInterval(seconds + 120)
+        activity.elapsedSeconds = seconds + 120
+        activity.movingSeconds = seconds
+        activity.distanceMeters = meters
+        activity.elevationGainMeters = climb
+        activity.isFinished = true
+        context.insert(activity)
     }
 
     private static func insertCardio(_ type: ActivityType, route: String, daysAgo: Int, into context: ModelContext) {
