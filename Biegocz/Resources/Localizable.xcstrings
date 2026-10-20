@@ -339,6 +339,16 @@
         }
       }
     },
+    "Appearance" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wygląd"
+          }
+        }
+      }
+    },
     "Archive" : {
       "localizations" : {
         "pl" : {
@@ -395,6 +405,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Autopauza"
+          }
+        }
+      }
+    },
+    "Automatic" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatyczny"
           }
         }
       }
@@ -571,6 +591,16 @@
         }
       }
     },
+    "Dark" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ciemny"
+          }
+        }
+      }
+    },
     "Data" : {
       "localizations" : {
         "pl" : {
@@ -627,6 +657,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Usunąć to ćwiczenie?"
+          }
+        }
+      }
+    },
+    "Device language" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Język urządzenia"
           }
         }
       }
@@ -1051,6 +1091,16 @@
         }
       }
     },
+    "Language" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Język"
+          }
+        }
+      }
+    },
     "Last time: %@" : {
       "localizations" : {
         "pl" : {
@@ -1127,6 +1177,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zaczynamy"
+          }
+        }
+      }
+    },
+    "Light" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jasny"
           }
         }
       }
@@ -1717,6 +1777,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dotknij, aby pominąć"
+          }
+        }
+      }
+    },
+    "The new language is used the next time Biegocz starts. To switch now, close the app from the app switcher and open it again." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nowy język pojawi się przy następnym uruchomieniu Biegocza. Aby zmienić go od razu, zamknij aplikację w przełączniku aplikacji i otwórz ją ponownie."
           }
         }
       }

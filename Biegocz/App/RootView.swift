@@ -2,12 +2,13 @@ import SwiftData
 import SwiftUI
 
 enum AppTab: Hashable {
-    case start, history, exercises
+    case start, history, exercises, settings
 }
 
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(SessionCoordinator.self) private var coordinator
+    @AppStorage(AppSettings.appearanceKey) private var appearance = AppAppearance.system
     @State private var tab = AppTab.start
     #if DEBUG
     @State private var debugDestination: DebugDestination?
@@ -24,8 +25,14 @@ struct RootView: View {
             Tab("Exercises", systemImage: "dumbbell", value: .exercises) {
                 ExerciseLibraryView()
             }
+            Tab("Settings", systemImage: "gearshape", value: .settings) {
+                NavigationStack {
+                    SettingsView()
+                }
+            }
         }
         .fontDesign(.rounded)
+        .preferredColorScheme(appearance.colorScheme)
         .fullScreenCover(isPresented: Binding(
             get: { coordinator.hasActiveSession },
             set: { _ in }
@@ -38,6 +45,7 @@ struct RootView: View {
                 }
             }
             .fontDesign(.rounded)
+            .preferredColorScheme(appearance.colorScheme)
         }
         .task {
             #if DEBUG
@@ -66,7 +74,6 @@ struct RootView: View {
         .sheet(item: $debugDestination) { destination in
             NavigationStack {
                 switch destination {
-                case .settings: SettingsView()
                 case .exercise(let exercise): ExerciseDetailView(exercise: exercise)
                 case .activity(let activity): ActivityDetailView(activity: activity)
                 }
@@ -86,13 +93,11 @@ struct RootView: View {
 
 #if DEBUG
 private enum DebugDestination: Identifiable {
-    case settings
     case exercise(Exercise)
     case activity(Activity)
 
     var id: String {
         switch self {
-        case .settings: "settings"
         case .exercise(let exercise): "exercise-\(exercise.id)"
         case .activity(let activity): "activity-\(activity.id)"
         }
@@ -108,7 +113,7 @@ extension RootView {
         case .exercises:
             tab = .exercises
         case .settings:
-            debugDestination = .settings
+            tab = .settings
         case .gym, .picker, .summary:
             coordinator.startGym(in: modelContext)
             guard let model = coordinator.gymSession else { return }

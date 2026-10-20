@@ -59,15 +59,6 @@ struct StartView: View {
                 .padding(.bottom, 24)
             }
             .appBackground()
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        SettingsView()
-                    } label: {
-                        Label("Settings", systemImage: "gearshape")
-                    }
-                }
-            }
             .sheet(isPresented: $isPickingWorkoutToRepeat) {
                 RepeatWorkoutPickerView { workout in
                     coordinator.repeatGym(workout, in: modelContext)

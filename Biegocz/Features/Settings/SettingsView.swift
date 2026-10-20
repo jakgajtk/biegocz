@@ -8,6 +8,10 @@ struct SettingsView: View {
     @AppStorage(AppSettings.restDurationKey) private var restDuration = AppSettings.defaultRestDuration
     @AppStorage(AppSettings.autoPauseRunKey) private var autoPauseRun = AppSettings.defaultAutoPauseRun
     @AppStorage(AppSettings.autoPauseRideKey) private var autoPauseRide = AppSettings.defaultAutoPauseRide
+    @AppStorage(AppSettings.appearanceKey) private var appearance = AppAppearance.system
+    @AppStorage(AppSettings.languageKey) private var language = AppLanguage.system
+    /// The language picked differs from the one on screen until the next launch.
+    @State private var languageChanged = false
 
     @State private var exportedFiles: ExportedFiles?
     @State private var exportFailed = false
@@ -84,6 +88,8 @@ struct SettingsView: View {
 
     private var form: some View {
         Form {
+            generalSection
+
             Section("Gym") {
                 Picker(selection: $weightStep) {
                     ForEach(AppSettings.weightStepOptions, id: \.self) { step in
@@ -92,18 +98,21 @@ struct SettingsView: View {
                 } label: {
                     SettingLabel(title: "Weight step", systemImage: "scalemass.fill", tint: .gymTint)
                 }
-                Stepper(
-                    value: $restDuration,
-                    in: AppSettings.restDurationRange,
-                    step: AppSettings.restDurationStep
-                ) {
-                    LabeledContent {
-                        Text(verbatim: Formatters.duration(seconds: Double(restDuration)))
-                            .monospacedDigit()
-                            .contentTransition(.numericText(value: Double(restDuration)))
-                    } label: {
-                        SettingLabel(title: "Default rest", systemImage: "timer", tint: .accentColor)
-                    }
+                HStack {
+                    SettingLabel(title: "Default rest", systemImage: "timer", tint: .accentColor)
+                    Spacer()
+                    Text(verbatim: Formatters.duration(seconds: Double(restDuration)))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                        .contentTransition(.numericText(value: Double(restDuration)))
+                    Stepper(
+                        "Default rest",
+                        value: $restDuration,
+                        in: AppSettings.restDurationRange,
+                        step: AppSettings.restDurationStep
+                    )
+                    .labelsHidden()
+                    .fixedSize()
                 }
             }
             .cardRow()
@@ -160,6 +169,36 @@ struct SettingsView: View {
         .animation(Design.spring, value: historyProgress)
         .navigationTitle("Settings")
         .navigationBarBackButtonHidden(historyProgress != nil)
+    }
+
+    private var generalSection: some View {
+        Section {
+            Picker(selection: $appearance) {
+                ForEach(AppAppearance.allCases) { option in
+                    Text(option.title).tag(option)
+                }
+            } label: {
+                SettingLabel(title: "Appearance", systemImage: "circle.lefthalf.filled", tint: .accentColor)
+            }
+            Picker(selection: $language) {
+                ForEach(AppLanguage.allCases) { option in
+                    option.title.tag(option)
+                }
+            } label: {
+                SettingLabel(title: "Language", systemImage: "globe", tint: .rideTint)
+            }
+            .onChange(of: language) { _, newValue in
+                newValue.apply()
+                languageChanged = true
+            }
+        } footer: {
+            if languageChanged {
+                Text("The new language is used the next time Biegocz starts. To switch now, close the app from the app switcher and open it again.")
+            }
+        }
+        .cardRow()
+        .sensoryFeedback(.selection, trigger: appearance)
+        .sensoryFeedback(.selection, trigger: language)
     }
 
     private var historySection: some View {

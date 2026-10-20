@@ -73,7 +73,7 @@ Resources/GPX/       sample routes for the simulator
 1. **Start**: buttons for Gym, Run, Ride, plus "repeat a previous gym workout". Small summary: this week's sessions and km.
 2. **History**: all activities, newest first, filter by type. Tap for detail.
 3. **Exercises**: exercise library, search, per-exercise history.
-Settings live behind a gear icon on Start.
+4. **Settings**: appearance (automatic / light / dark), language (device / English / Polski, stored as the app's `AppleLanguages`, applies on next launch), gym and run settings, data export/import, history import.
 
 ## Gym
 
