@@ -35,6 +35,7 @@ Biegocz is a personal iOS app for logging gym workouts (exercises, sets, reps, w
 - Until XcodeBuildMCP is installed, build with `scripts/build.sh` (build) or `scripts/build.sh test` (build + tests + failure messages). Both use the iPhone 17 simulator and `build/DerivedData`.
 - After a build, `python3 scripts/check_strings.py` must report 0 problems: every string used in code is in the catalog, and every catalog entry has Polish (all plural forms).
 - To check a screen visually: `scripts/screenshot.sh <screen> [pl|en] [light|dark] [wait]` (screens in `DebugLaunch.Screen`; debug-only demo data in an in-memory store). New translations: put them in a JSON file and run `scripts/add_strings.py`.
+- App Store release: `docs/RELEASE.md`. If a feature changes what the app stores, sends or which APIs it uses, update `Biegocz/PrivacyInfo.xcprivacy`, `docs/privacy.md` and the listing in `docs/app-store/` to match.
 - Dynamic keys the compiler can't extract (e.g. `exercise.<key>`) go into the catalog with `"extractionState" : "manual"`.
 
 ## Design

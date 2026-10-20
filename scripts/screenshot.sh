@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Installs the last debug build on the booted iPhone 17 simulator, opens one
 # screen with demo data and saves a screenshot to build/screens/.
-#   scripts/screenshot.sh <screen> [pl|en] [light|dark] [wait-seconds]
+#   scripts/screenshot.sh <screen> [pl|en] [light|dark] [wait-seconds] [device]
 # Screens: see DebugLaunch.Screen (e.g. gym, picker, summary, exerciseDetail).
 set -e
 cd "${0:A:h}/.."
@@ -10,7 +10,7 @@ screen="$1"
 lang="${2:-pl}"
 appearance="${3:-light}"
 wait="${4:-3}"
-device="iPhone 17"
+device="${5:-iPhone 17}"
 app="build/DerivedData/Build/Products/Debug-iphonesimulator/Biegocz.app"
 bundle="com.gajtkowski.biegocz"
 locale="pl_PL"

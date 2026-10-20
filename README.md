@@ -76,6 +76,9 @@ Other scripts:
 | `scripts/make_icon.swift` | Render the app icon |
 | `scripts/make_sample_gpx.py` | Generate the simulator GPX routes |
 | `scripts/mapmyrun_export.py` | Download your MapMyRun workouts as TCX files for importing |
+| `scripts/store_screenshots.sh` | App Store screenshots (6.9", English and Polish) into `build/store/` |
+
+Publishing to the App Store: see [`docs/RELEASE.md`](docs/RELEASE.md). The listing text is in `docs/app-store/`, and the privacy policy and support pages (served by GitHub Pages from `docs/`) are in `docs/privacy.md` and `docs/support.md`.
 
 ### Importing history
 
