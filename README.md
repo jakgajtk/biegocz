@@ -3,10 +3,11 @@
 A personal iPhone app for logging gym workouts and GPS-tracked runs and rides. Everything stays on the device: no account, no backend, no sync. Available in English and Polish.
 
 <p>
-  <img src="docs/screenshots/start-pl-dark.png" width="200" alt="Start screen">
-  <img src="docs/screenshots/gym-pl-dark.png" width="200" alt="Gym workout">
-  <img src="docs/screenshots/prestart-pl-dark.png" width="200" alt="Run pre-start">
-  <img src="docs/screenshots/activityDetail-pl-dark.png" width="200" alt="Run detail with splits">
+  <img src="docs/screenshots/start-pl-dark.png" width="160" alt="Start screen">
+  <img src="docs/screenshots/history-pl-dark.png" width="160" alt="History overview with chart and personal bests">
+  <img src="docs/screenshots/routes-pl-dark.png" width="160" alt="Suggested 5 km running loops">
+  <img src="docs/screenshots/gym-pl-dark.png" width="160" alt="Gym workout">
+  <img src="docs/screenshots/activityDetail-pl-dark.png" width="160" alt="Run detail with splits">
 </p>
 
 ## Features
@@ -23,13 +24,19 @@ A personal iPhone app for logging gym workouts and GPS-tracked runs and rides. E
 - Filtering of noisy, stale and impossible GPS fixes, plus optional auto-pause.
 - Per-kilometer splits, approximate elevation gain (barometer when available), and a route map.
 - Crash-safe: progress is saved every 10 seconds, and an interrupted session can be resumed, saved or discarded.
+- Suggested routes: pick a distance and get three loops around you (Apple Maps directions), then follow the chosen one on the live map.
+
+**History**
+- Overview of the week, month or year with a chart, the change against the same point of the previous period, a weekly streak and personal bests.
+- Filter by gym, run or ride; months show their totals.
 
 **Everywhere**
 - Saves workouts and routes to Apple Health, if you allow it. The app works fully without it.
 - Export everything as JSON (plus a CSV of all gym sets) and import it back.
 - Import past runs and rides, with maps, from a Strava account export or MapMyRun (GPX, TCX and FIT files, also gzipped). Duplicates are skipped.
 - Full Polish translation with correct plural forms and a decimal comma ("5,2 km").
-- Dark mode, haptics and animations that respect Reduce Motion.
+- Light, dark or automatic appearance, and English or Polish regardless of the device language.
+- Haptics and animations that respect Reduce Motion.
 
 ## Requirements
 
