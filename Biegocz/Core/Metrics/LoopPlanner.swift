@@ -38,10 +38,13 @@ enum LoopPlanner {
     static let detourFactor = 1.3
     /// Close enough to the target (fraction of it).
     static let tolerance = 0.1
-    /// Attempts per route, the first one included.
-    static let maxAttempts = 3
-    /// Waypoints besides the start. Three gives a rounded loop with few requests.
-    static let waypointCount = 3
+    /// Attempts per route, the first one included. The first measures how
+    /// winding the roads are; the second is sized from that and nearly always
+    /// lands within the tolerance. Apple Maps allows ~50 requests a minute,
+    /// so every request counts.
+    static let maxAttempts = 2
+    /// Waypoints besides the start: a triangle, so three requests per attempt.
+    static let waypointCount = 2
 
     /// Radius of the circle for a loop of `distance` meters of road.
     static func initialRadius(for distance: Double) -> Double {

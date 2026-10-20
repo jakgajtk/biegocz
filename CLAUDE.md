@@ -101,7 +101,7 @@ Exercise detail:
 
 Pre-start: show GPS accuracy (poor / ok / good). Starting is allowed at any time, but warn if accuracy is poor.
 
-Suggested routes (pre-start, optional): pick a distance preset, get 3 round trips from the current position heading out in different directions, choose one. `LoopPlanner` (pure) puts waypoints on a circle through the start; Apple Maps directions (walking for runs, cycling for rides with walking as fallback) connect them, and the circle is resized until the road length is within 10% of the target (max 3 attempts). The chosen route is drawn as a dashed guide on the live map; it isn't saved. This is the only feature that uses the network (Apple Maps).
+Suggested routes (pre-start, optional): pick a distance preset, get 3 round trips from the current position heading out in different directions, choose one. `LoopPlanner` (pure) puts waypoints on a circle through the start; Apple Maps directions (walking for runs, cycling for rides with walking as fallback) connect them, and the circle is resized until the road length is within 10% of the target. Apple Maps allows only ~50 direction requests a minute, then throttles: triangles (3 legs), max 2 attempts, legs fetched one at a time, results cached per distance, distance taps debounced; when throttled, stop asking, keep what was found, and retry after 20 s. The chosen route is drawn as a dashed guide on the live map; it isn't saved. This is the only feature that uses the network (Apple Maps).
 
 Location:
 - Use `CLLocationUpdate.liveUpdates` with a `CLBackgroundActivitySession` so tracking continues with the screen locked. Request When In Use authorization only, not Always.

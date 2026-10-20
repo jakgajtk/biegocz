@@ -111,6 +111,7 @@ struct RouteSuggestionsView: View {
         .background(Color.appBackground)
         .animation(Design.spring, value: model.routes)
         .animation(Design.spring, value: model.isLoading)
+        .animation(Design.spring, value: model.isThrottled)
     }
 
     @ViewBuilder
@@ -130,6 +131,18 @@ struct RouteSuggestionsView: View {
             .card()
         } else {
             VStack(spacing: 10) {
+                if model.isThrottled {
+                    Label {
+                        Text(model.isLoading ? "Apple Maps needs a short break. Trying again in a moment…" : "Apple Maps needs a short break, so there are fewer routes. Try this distance again in a minute.")
+                    } icon: {
+                        Image(systemName: "hourglass")
+                            .symbolEffect(.pulse, isActive: model.isLoading)
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .transition(.opacity)
+                }
                 ForEach(model.routes) { route in
                     RouteRow(route: route, isSelected: route.id == model.selectedID, tint: tint) {
                         model.selectedID = route.id

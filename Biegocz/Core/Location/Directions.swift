@@ -9,17 +9,41 @@ struct DirectionsLeg: Equatable, Sendable {
 
 /// Road directions between two points: Apple Maps on device, a fake in tests.
 protocol DirectionsProvider: Sendable {
+    /// Throws `DirectionsError.throttled` when the service refuses more requests for now.
     func leg(from start: Coordinate, to end: Coordinate, for activity: ActivityType) async throws -> DirectionsLeg
+}
+
+enum DirectionsError: Error, Equatable {
+    /// Apple Maps allows about 50 direction requests a minute per app, then
+    /// refuses them for a while. Retrying right away only makes it longer.
+    case throttled
 }
 
 /// Apple Maps directions: walking for runs, cycling for rides. Cycling
 /// directions aren't available everywhere; walking is the fallback there.
 struct MapKitDirections: DirectionsProvider {
     func leg(from start: Coordinate, to end: Coordinate, for activity: ActivityType) async throws -> DirectionsLeg {
-        if activity == .ride, let leg = try? await leg(from: start, to: end, transport: .cycling) {
-            return leg
+        do {
+            if activity == .ride {
+                do {
+                    return try await leg(from: start, to: end, transport: .cycling)
+                } catch where !Self.isThrottled(error) {
+                    // No cycling directions here: fall back to walking.
+                }
+            }
+            return try await leg(from: start, to: end, transport: .walking)
+        } catch where Self.isThrottled(error) {
+            throw DirectionsError.throttled
         }
-        return try await leg(from: start, to: end, transport: .walking)
+    }
+
+    /// When throttled, MapKit reports `loadingThrottled` either as the error
+    /// code or, wrapped in an "unknown" error, under `MKDirectionsErrorCode`.
+    static func isThrottled(_ error: Error) -> Bool {
+        let error = error as NSError
+        guard error.domain == MKError.errorDomain else { return false }
+        let throttled = MKError.Code.loadingThrottled.rawValue
+        return error.code == throttled || (error.userInfo["MKDirectionsErrorCode"] as? Int) == Int(throttled)
     }
 
     private func leg(from start: Coordinate, to end: Coordinate, transport: MKDirectionsTransportType) async throws -> DirectionsLeg {

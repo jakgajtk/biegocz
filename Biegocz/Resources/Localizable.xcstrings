@@ -401,6 +401,26 @@
         }
       }
     },
+    "Apple Maps needs a short break, so there are fewer routes. Try this distance again in a minute." : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapy Apple potrzebują chwili przerwy, więc tras jest mniej. Wybierz ten dystans ponownie za minutę."
+          }
+        }
+      }
+    },
+    "Apple Maps needs a short break. Trying again in a moment…" : {
+      "localizations" : {
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapy Apple potrzebują chwili przerwy. Zaraz spróbuję ponownie…"
+          }
+        }
+      }
+    },
     "Archive" : {
       "localizations" : {
         "pl" : {

@@ -6,11 +6,34 @@ import Testing
 private struct FakeDirections: DirectionsProvider {
     var detour = 1.4
     var failsBeyondMeters: Double = .infinity
+    var budget: RequestBudget?
 
     func leg(from start: Coordinate, to end: Coordinate, for activity: ActivityType) async throws -> DirectionsLeg {
+        if let budget, await !budget.take() { throw DirectionsError.throttled }
         let straight = GeoMath.distance(start, end)
         guard straight < failsBeyondMeters else { throw URLError(.cannotFindHost) }
         return DirectionsLeg(coordinates: [start, end], distance: straight * detour)
+    }
+}
+
+/// Allows a number of requests, then throttles until refilled, like Apple Maps.
+private actor RequestBudget {
+    private(set) var remaining: Int
+    private(set) var used = 0
+
+    init(_ remaining: Int) {
+        self.remaining = remaining
+    }
+
+    func take() -> Bool {
+        guard remaining > 0 else { return false }
+        remaining -= 1
+        used += 1
+        return true
+    }
+
+    func refill(_ count: Int) {
+        remaining = count
     }
 }
 
@@ -75,24 +98,107 @@ struct RouteSuggestionsModelTests {
     private let start = Coordinate(latitude: 52.2297, longitude: 21.0122)
 
     @Test func planResizesUntilCloseToTheTarget() async throws {
-        // Roads 40% longer than straight lines, more than the planner's first guess.
-        let route = try #require(await RouteSuggestionsModel.plan(
-            id: 0, from: start, bearing: 45, target: 10_000, type: .run, directions: FakeDirections(detour: 1.4)
-        ))
+        // Roads twice as long as straight lines: the first guess is far off, the second is sized from it.
+        let plan = await RouteSuggestionsModel.plan(
+            id: 0, from: start, bearing: 45, target: 10_000, type: .run, directions: FakeDirections(detour: 2)
+        )
+        let route = try #require(plan.route)
+        #expect(!plan.throttled)
         #expect(LoopPlanner.isCloseEnough(route.distance, to: 10_000))
         #expect(route.coordinates.first == start)
         #expect(route.coordinates.last == start)
         #expect(route.bearing == 45)
     }
 
-    @Test func planShrinksWhenWaypointsAreUnreachable() async throws {
-        // Legs longer than 1.5 km fail; the first guess for 10 km has ~2.2 km legs.
-        let route = await RouteSuggestionsModel.plan(
-            id: 0, from: start, bearing: 0, target: 10_000, type: .run,
-            directions: FakeDirections(detour: 1.3, failsBeyondMeters: 1_500)
+    @Test func planUsesAtMostSixRequests() async {
+        let budget = RequestBudget(100)
+        _ = await RouteSuggestionsModel.plan(
+            id: 0, from: start, bearing: 0, target: 10_000, type: .run, directions: FakeDirections(detour: 2.5, budget: budget)
         )
-        let found = try #require(route)
+        #expect(await budget.used == LoopPlanner.maxAttempts * (LoopPlanner.waypointCount + 1))
+    }
+
+    @Test func planShrinksWhenWaypointsAreUnreachable() async throws {
+        // Legs longer than 2.2 km fail; the first guess for 10 km has ~2.6 km legs.
+        let plan = await RouteSuggestionsModel.plan(
+            id: 0, from: start, bearing: 0, target: 10_000, type: .run,
+            directions: FakeDirections(detour: 1.3, failsBeyondMeters: 2_200)
+        )
+        let found = try #require(plan.route)
         #expect(found.distance < 10_000)
+    }
+
+    @Test func planStopsWhenThrottled() async {
+        let budget = RequestBudget(2)
+        let plan = await RouteSuggestionsModel.plan(
+            id: 0, from: start, bearing: 0, target: 10_000, type: .run, directions: FakeDirections(budget: budget)
+        )
+        #expect(plan.throttled)
+        #expect(plan.route == nil)
+        #expect(await budget.used == 2)
+    }
+
+    @Test func throttledWithNothingWaitsAndTriesAgain() async {
+        let budget = RequestBudget(0)
+        let model = RouteSuggestionsModel(
+            type: .run, start: start, directions: FakeDirections(budget: budget), throttleWait: .milliseconds(50)
+        )
+        model.load()
+        while !model.isThrottled { await Task.yield() }
+        #expect(model.isLoading)
+        await budget.refill(100)
+        while model.isLoading { await Task.yield() }
+        #expect(model.routes.count == 3)
+        #expect(!model.isThrottled)
+        #expect(!model.failed)
+    }
+
+    @Test func throttledHalfwayKeepsWhatItFoundWithoutCaching() async {
+        // Enough for one loop (two attempts of three legs) and a bit more.
+        let budget = RequestBudget(7)
+        let model = RouteSuggestionsModel(type: .run, start: start, directions: FakeDirections(budget: budget))
+        model.load()
+        while model.isLoading { await Task.yield() }
+        #expect(!model.routes.isEmpty)
+        #expect(model.routes.count < 3)
+        #expect(model.isThrottled)
+
+        // Coming back to the distance plans again instead of showing the partial result.
+        await budget.refill(100)
+        model.setTarget(8_000)
+        model.setTarget(5_000)
+        while model.isLoading { await Task.yield() }
+        #expect(model.routes.count == 3)
+        #expect(!model.isThrottled)
+    }
+
+    @Test func revisitingADistanceUsesTheCache() async {
+        let budget = RequestBudget(1_000)
+        let model = RouteSuggestionsModel(type: .run, start: start, directions: FakeDirections(budget: budget))
+        model.load()
+        while model.isLoading { await Task.yield() }
+        let used = await budget.used
+        model.setTarget(8_000)
+        while model.isLoading { await Task.yield() }
+        model.setTarget(5_000)
+        #expect(!model.isLoading)
+        #expect(model.routes.count == 3)
+        #expect(await budget.used > used)
+        let afterEight = await budget.used
+        model.setTarget(8_000)
+        #expect(await budget.used == afterEight)
+    }
+
+    @Test func quickTapsOnlyPlanTheLastDistance() async {
+        let budget = RequestBudget(1_000)
+        let model = RouteSuggestionsModel(type: .run, start: start, directions: FakeDirections(budget: budget))
+        for km in [8.0, 10, 15, 3] {
+            model.setTarget(km * 1000)
+        }
+        while model.isLoading { await Task.yield() }
+        #expect(model.targetDistance == 3_000)
+        #expect(model.routes.count == 3)
+        #expect(await budget.used <= 3 * LoopPlanner.maxAttempts * (LoopPlanner.waypointCount + 1))
     }
 
     @Test func loadOffersThreeRoutesAndSelectsOne() async throws {
