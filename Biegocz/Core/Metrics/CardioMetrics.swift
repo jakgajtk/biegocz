@@ -79,7 +79,7 @@ struct LocationFilter: Codable, Equatable, Sendable {
     }
 
     mutating func process(_ point: RoutePoint, receivedAt now: Date) -> FilterDecision {
-        guard point.horizontalAccuracy >= 0 else { return .rejected(.invalid) }
+        guard point.horizontalAccuracy >= 0, point.hasValidCoordinates else { return .rejected(.invalid) }
         guard point.horizontalAccuracy <= config.maxHorizontalAccuracy else { return .rejected(.inaccurate) }
         guard now.timeIntervalSince(point.timestamp) <= config.maxAge else { return .rejected(.stale) }
 

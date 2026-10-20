@@ -52,8 +52,9 @@ enum FITParser {
             if header & 0x80 != 0 {
                 local = (header >> 5) & 0x03
                 let timeOffset = UInt32(header & 0x1F)
-                var time = (lastTimestamp & ~0x1F) + timeOffset
-                if timeOffset < lastTimestamp & 0x1F { time += 0x20 }
+                // Wrapping: a crafted timestamp near UInt32.max must not trap.
+                var time = (lastTimestamp & ~0x1F) &+ timeOffset
+                if timeOffset < lastTimestamp & 0x1F { time &+= 0x20 }
                 compressedTime = time
                 lastTimestamp = time
             } else if header & 0x40 != 0 {

@@ -87,17 +87,27 @@ enum TrackImport {
         guard !segments.isEmpty else { return nil }
 
         let hasAltitude = raw.contains { $0.contains { $0.altitude != 0 } }
-        let elapsed = track.elapsedSeconds ?? end.timeIntervalSince(start)
+        let elapsed = plausible(track.elapsedSeconds) ?? end.timeIntervalSince(start)
         return ImportedActivity(
             type: type,
             start: start,
             end: max(end, start.addingTimeInterval(elapsed)),
             elapsedSeconds: elapsed,
-            movingSeconds: min(track.movingSeconds ?? recorded, elapsed),
-            distanceMeters: track.distanceMeters ?? RouteSummaries.length(of: segments),
-            elevationGainMeters: track.elevationGainMeters ?? (hasAltitude ? gain.total : nil),
+            movingSeconds: min(plausible(track.movingSeconds) ?? recorded, elapsed),
+            distanceMeters: plausible(track.distanceMeters) ?? RouteSummaries.length(of: segments),
+            elevationGainMeters: plausible(track.elevationGainMeters) ?? (hasAltitude ? gain.total : nil),
             segments: segments
         )
+    }
+
+    /// Largest total taken from a file (seconds or meters, about 31 years or
+    /// 1 million km). Anything bigger, negative or not finite is ignored.
+    static let maxTotal = 1e9
+
+    /// A file total if it's usable, otherwise `nil` so the track is used instead.
+    static func plausible(_ value: Double?) -> Double? {
+        guard let value, value.isFinite, value >= 0, value <= maxTotal else { return nil }
+        return value
     }
 
     /// Splits a segment wherever the recording stopped for longer than `pauseGap`.

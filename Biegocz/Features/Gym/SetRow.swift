@@ -71,7 +71,7 @@ struct SetRow: View {
             unit: "kg",
             value: Binding(
                 get: { set.weightKg },
-                set: { set.weightKg = $0.map { max(0, $0) }; onChange() }
+                set: { set.weightKg = $0.flatMap(SetLimits.weight); onChange() }
             ),
             format: .number.precision(.fractionLength(0...2)),
             keyboard: .decimalPad,
@@ -89,7 +89,7 @@ struct SetRow: View {
             unit: nil,
             value: Binding(
                 get: { set.reps.map(Double.init) },
-                set: { set.reps = $0.map { max(0, Int($0.rounded())) }; onChange() }
+                set: { set.reps = $0.flatMap(SetLimits.reps); onChange() }
             ),
             format: .number.precision(.fractionLength(0)),
             keyboard: .numberPad,
@@ -107,7 +107,7 @@ struct SetRow: View {
             unit: "s",
             value: Binding(
                 get: { set.durationSeconds },
-                set: { set.durationSeconds = $0.map { max(0, $0.rounded()) }; onChange() }
+                set: { set.durationSeconds = $0.flatMap(SetLimits.duration); onChange() }
             ),
             format: .number.precision(.fractionLength(0)),
             keyboard: .numberPad,

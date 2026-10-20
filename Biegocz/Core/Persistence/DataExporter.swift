@@ -70,7 +70,8 @@ enum DataExporter {
     /// One row per gym set. Machine-readable: fixed English column names,
     /// ISO 8601 dates and `.` as the decimal separator.
     static func gymSetsCSV(for document: ExportDocument) -> String {
-        let names = Dictionary(uniqueKeysWithValues: document.exercises.map { ($0.id, $0.name) })
+        // Never trap on duplicate ids: a failing export would block backups.
+        let names = Dictionary(document.exercises.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
         let dateStyle = Date.ISO8601FormatStyle()
         var lines = ["date,workout_id,exercise,set,weight_kg,reps,duration_s,done"]
 
@@ -98,8 +99,9 @@ enum DataExporter {
     static func writeExportFiles(from context: ModelContext, now: Date = .now) throws -> [URL] {
         let document = try makeDocument(from: context, now: now)
         let stamp = now.formatted(.iso8601.year().month().day())
+        removeOldExports()
         let directory = FileManager.default.temporaryDirectory
-            .appending(path: "Export-\(UUID().uuidString)", directoryHint: .isDirectory)
+            .appending(path: "\(exportFolderPrefix)\(UUID().uuidString)", directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 
         let jsonURL = directory.appending(path: "Biegocz-\(stamp).json")
@@ -107,6 +109,19 @@ enum DataExporter {
         try jsonData(for: document).write(to: jsonURL, options: .atomic)
         try Data(gymSetsCSV(for: document).utf8).write(to: csvURL, options: .atomic)
         return [jsonURL, csvURL]
+    }
+
+    private static let exportFolderPrefix = "Export-"
+
+    /// Earlier exports hold the whole history, routes included; once shared
+    /// they aren't needed, so they don't pile up in the temporary folder.
+    private static func removeOldExports() {
+        let manager = FileManager.default
+        let temporary = manager.temporaryDirectory
+        guard let names = try? manager.contentsOfDirectory(atPath: temporary.path) else { return }
+        for name in names where name.hasPrefix(exportFolderPrefix) {
+            try? manager.removeItem(at: temporary.appending(path: name, directoryHint: .isDirectory))
+        }
     }
 
     private static func segmentStarts(of segments: [[RoutePoint]]) -> [Int] {

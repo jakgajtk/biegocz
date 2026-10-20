@@ -24,6 +24,7 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -34,12 +35,33 @@ WORKOUT_LINK = re.compile(r"/workouts?/(\d+)")
 DELAY_SECONDS = 1.0
 
 
+def is_mapmyrun(url):
+    parts = urllib.parse.urlsplit(url)
+    host = (parts.hostname or "").lower()
+    return parts.scheme == "https" and (host == "mapmyrun.com" or host.endswith(".mapmyrun.com"))
+
+
+class CookieSafeRedirects(urllib.request.HTTPRedirectHandler):
+    """urllib copies every header, the session cookie included, onto a
+    redirect, even to another host or plain http. Only MapMyRun over https
+    gets the cookie."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        new = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if new is not None and not is_mapmyrun(new.full_url):
+            new.remove_header("Cookie")
+        return new
+
+
+OPENER = urllib.request.build_opener(CookieSafeRedirects)
+
+
 def fetch(url, cookie):
     request = urllib.request.Request(url, headers={
         "Cookie": cookie,
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)",
     })
-    with urllib.request.urlopen(request, timeout=60) as response:
+    with OPENER.open(request, timeout=60) as response:
         return response.read()
 
 

@@ -48,8 +48,13 @@ enum Formatters {
         )
     }
 
-    /// "42:05" below an hour, "1:02:03" from an hour up.
+    /// Longest duration shown (about 31 years). `Duration` traps on values it
+    /// can't represent, and a corrupt import must not crash every screen.
+    static let maxDurationSeconds = 1e9
+
+    /// "42:05" below an hour, "1:02:03" from an hour up. "--" when out of range.
     static func duration(seconds: Double, locale: Locale = .autoupdatingCurrent) -> String {
+        guard seconds.isFinite, abs(seconds) <= maxDurationSeconds else { return "--" }
         let pattern: Duration.TimeFormatStyle.Pattern = seconds >= 3600 ? .hourMinuteSecond : .minuteSecond
         return Duration.seconds(seconds.rounded(.down)).formatted(.time(pattern: pattern).locale(locale))
     }
@@ -69,7 +74,9 @@ enum Formatters {
 
     /// Minutes and seconds per kilometer, e.g. "5:12". Returns "--" when not moving.
     static func pace(secondsPerKilometer: Double?, locale: Locale = .autoupdatingCurrent) -> String {
-        guard let secondsPerKilometer, secondsPerKilometer.isFinite, secondsPerKilometer > 0 else { return "--" }
+        guard let secondsPerKilometer, secondsPerKilometer.isFinite, secondsPerKilometer > 0,
+              secondsPerKilometer <= maxDurationSeconds
+        else { return "--" }
         return Duration.seconds(secondsPerKilometer.rounded()).formatted(.time(pattern: .minuteSecond).locale(locale))
     }
 

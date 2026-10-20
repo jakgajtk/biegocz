@@ -9,6 +9,30 @@ struct SetValues: Equatable, Codable, Sendable {
     static let empty = SetValues()
 }
 
+/// Bounds for set values typed in (or pasted) and imported. Far above any
+/// real set; they only keep conversions and sums from overflowing.
+enum SetLimits {
+    static let maxWeightKg = 9_999.0
+    static let maxReps = 9_999
+    static let maxDurationSeconds = 86_400.0
+
+    static func weight(_ value: Double) -> Double? {
+        value.isFinite ? min(max(0, value), maxWeightKg) : nil
+    }
+
+    static func reps(_ value: Double) -> Int? {
+        value.isFinite ? Int(min(max(0, value.rounded()), Double(maxReps))) : nil
+    }
+
+    static func reps(_ value: Int) -> Int {
+        min(max(0, value), maxReps)
+    }
+
+    static func duration(_ value: Double) -> Double? {
+        value.isFinite ? min(max(0, value.rounded()), maxDurationSeconds) : nil
+    }
+}
+
 /// A set as logged in some past session.
 struct LoggedSet: Equatable, Sendable {
     var values: SetValues

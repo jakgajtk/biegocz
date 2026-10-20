@@ -66,25 +66,31 @@ enum DataImporter {
             }
         }
 
-        let existingActivities = Set(try context.fetch(FetchDescriptor<Activity>()).map(\.id))
+        var existingActivities = Set(try context.fetch(FetchDescriptor<Activity>()).map(\.id))
         for record in document.activities {
             // Unfinished sessions aren't restored; they can't be resumed anyway.
             guard record.isFinished, !existingActivities.contains(record.id) else {
                 result.activitiesSkipped += 1
                 continue
             }
+            existingActivities.insert(record.id)
             let activity = Activity(type: ActivityType(rawValue: record.type) ?? .gym, startDate: record.startDate)
             activity.id = record.id
             activity.endDate = record.endDate
             activity.isFinished = true
             activity.note = record.note
             activity.healthKitWorkoutID = record.healthKitWorkoutID
-            activity.elapsedSeconds = record.elapsedSeconds
-            activity.movingSeconds = record.movingSeconds
-            activity.distanceMeters = record.distanceMeters
-            activity.elevationGainMeters = record.elevationGainMeters
+            // A hand-edited file can hold values no real activity has (1e300);
+            // those are dropped rather than crashing every screen that shows them.
+            activity.elapsedSeconds = TrackImport.plausible(record.elapsedSeconds) ?? 0
+            activity.movingSeconds = TrackImport.plausible(record.movingSeconds) ?? 0
+            activity.distanceMeters = TrackImport.plausible(record.distanceMeters) ?? 0
+            activity.elevationGainMeters = TrackImport.plausible(record.elevationGainMeters)
             if !record.route.isEmpty {
-                activity.routeData = RouteCodec.encode(segments: segments(of: record.route, starts: record.routeSegmentStarts))
+                let route = segments(of: record.route, starts: record.routeSegmentStarts)
+                    .map { $0.filter(\.hasValidCoordinates) }
+                    .filter { !$0.isEmpty }
+                if !route.isEmpty { activity.routeData = RouteCodec.encode(segments: route) }
             }
             context.insert(activity)
 
@@ -96,9 +102,9 @@ enum DataImporter {
                 for setRecord in entryRecord.sets {
                     let set = ExerciseSet(
                         order: setRecord.order,
-                        weightKg: setRecord.weightKg,
-                        reps: setRecord.reps,
-                        durationSeconds: setRecord.durationSeconds
+                        weightKg: setRecord.weightKg.flatMap(SetLimits.weight),
+                        reps: setRecord.reps.map(SetLimits.reps),
+                        durationSeconds: setRecord.durationSeconds.flatMap(SetLimits.duration)
                     )
                     set.id = setRecord.id
                     set.isDone = setRecord.isDone

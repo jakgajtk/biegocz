@@ -39,7 +39,8 @@ enum Gzip {
     }
 
     private static func skipZeroTerminated(_ bytes: [UInt8], from start: Int) throws -> Int {
-        guard let end = bytes[start...].firstIndex(of: 0) else { throw GzipError.corrupt }
+        // A large FEXTRA length can point past the end of the file.
+        guard start < bytes.count, let end = bytes[start...].firstIndex(of: 0) else { throw GzipError.corrupt }
         return end + 1
     }
 }
